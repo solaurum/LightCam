@@ -1,0 +1,10 @@
+.DS_Store
+xcuserdata/
+*.xcuserdata
+*.xcuserstate
+DerivedData/
+*.dSYM.zip
+*.dSYM
+Pods/
+.build/
+*.xcworkspace/xcuserdata/
