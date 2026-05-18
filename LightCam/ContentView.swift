@@ -1,228 +1,78 @@
 import SwiftUI
-import AVFoundation
-import Photos
-#if targetEnvironment(simulator)
-import SimulatorCameraClient
-#endif
-
-// MARK: - Camera Manager
-
-class CameraManager: NSObject, ObservableObject {
-    @Published var session = AVCaptureSession()
-    @Published var isSessionReady = false
-    @Published var permissionDenied = false
-    @Published var isFrontCamera = true
-
-    private let photoOutput = AVCapturePhotoOutput()
-    private var currentInput: AVCaptureDeviceInput?
-    private var photoCompletion: ((UIImage) -> Void)?
-
-    func start() {
-        switch AVCaptureDevice.authorizationStatus(for: .video) {
-        case .authorized:
-            setupSession()
-        case .notDetermined:
-            AVCaptureDevice.requestAccess(for: .video) { [weak self] granted in
-                DispatchQueue.main.async {
-                    granted ? self?.setupSession() : (self?.permissionDenied = true)
-                }
-            }
-        default:
-            permissionDenied = true
-        }
-    }
-
-    private func setupSession() {
-        session.beginConfiguration()
-        session.sessionPreset = .photo
-
-        guard let camera = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .front),
-              let input = try? AVCaptureDeviceInput(device: camera),
-              session.canAddInput(input) else {
-            session.commitConfiguration()
-            return
-        }
-
-        session.addInput(input)
-        currentInput = input
-
-        if session.canAddOutput(photoOutput) {
-            session.addOutput(photoOutput)
-        }
-
-        session.commitConfiguration()
-
-        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
-            self?.session.startRunning()
-            DispatchQueue.main.async { self?.isSessionReady = true }
-        }
-    }
-
-    func switchCamera() {
-        guard let current = currentInput else { return }
-        let newPosition: AVCaptureDevice.Position = current.device.position == .front ? .back : .front
-
-        session.beginConfiguration()
-        session.removeInput(current)
-
-        if let device = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: newPosition),
-           let input = try? AVCaptureDeviceInput(device: device),
-           session.canAddInput(input) {
-            session.addInput(input)
-            currentInput = input
-            isFrontCamera = newPosition == .front
-        } else {
-            session.addInput(current)
-        }
-
-        session.commitConfiguration()
-    }
-
-    func capture(completion: @escaping (UIImage) -> Void) {
-        photoCompletion = completion
-        photoOutput.capturePhoto(with: AVCapturePhotoSettings(), delegate: self)
-    }
-
-    func stop() {
-        if session.isRunning { session.stopRunning() }
-    }
-}
-
-extension CameraManager: AVCapturePhotoCaptureDelegate {
-    func photoOutput(_ output: AVCapturePhotoOutput,
-                     didFinishProcessingPhoto photo: AVCapturePhoto,
-                     error: Error?) {
-        guard let data = photo.fileDataRepresentation(),
-              let image = UIImage(data: data) else { return }
-
-        let fixed: UIImage
-        if isFrontCamera, let cg = image.cgImage {
-            fixed = UIImage(cgImage: cg, scale: image.scale, orientation: .leftMirrored)
-        } else {
-            fixed = image
-        }
-
-        DispatchQueue.main.async { [weak self] in
-            self?.photoCompletion?(fixed)
-            self?.saveToLibrary(fixed)
-        }
-    }
-
-    private func saveToLibrary(_ image: UIImage) {
-        PHPhotoLibrary.requestAuthorization(for: .addOnly) { status in
-            guard status == .authorized || status == .limited else { return }
-            PHPhotoLibrary.shared().performChanges {
-                PHAssetCreationRequest.creationRequestForAsset(from: image)
-            }
-        }
-    }
-}
-
-// MARK: - Camera Preview
-
-struct CameraPreview: UIViewRepresentable {
-    let session: AVCaptureSession
-    let isFront: Bool
-
-    func makeUIView(context: Context) -> UIView {
-        let view = UIView()
-        view.backgroundColor = UIColor(white: 0.08, alpha: 1)
-        let layer = AVCaptureVideoPreviewLayer(session: session)
-        layer.videoGravity = .resizeAspectFill
-        view.layer.addSublayer(layer)
-        return view
-    }
-
-    func updateUIView(_ uiView: UIView, context: Context) {
-        guard let layer = uiView.layer.sublayers?.first as? AVCaptureVideoPreviewLayer else { return }
-        layer.frame = uiView.bounds
-        layer.setAffineTransform(isFront ? CGAffineTransform(scaleX: -1, y: 1) : .identity)
-    }
-}
-
-// MARK: - Light Preset
-
-struct LightPreset: Identifiable {
-    let id: Int
-    let name: String
-    let color: Color
-    let uiColor: UIColor
-    let temp: Int
-    let defaultScreenBrightness: Double
-    let defaultColorBrightness: Double
-
-    init(id: Int, name: String, red: Double, green: Double, blue: Double, temp: Int,
-         defaultScreenBrightness: Double = 0.88, defaultColorBrightness: Double = 0.0) {
-        self.id = id
-        self.name = name
-        self.color = Color(red: red, green: green, blue: blue)
-        self.uiColor = UIColor(red: red, green: green, blue: blue, alpha: 1)
-        self.temp = temp
-        self.defaultScreenBrightness = defaultScreenBrightness
-        self.defaultColorBrightness = defaultColorBrightness
-    }
-}
-
-// MARK: - Shutter Button Style
-
-struct ShutterButtonStyle: ButtonStyle {
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .scaleEffect(configuration.isPressed ? 0.92 : 1.0)
-            .shadow(color: .black.opacity(configuration.isPressed ? 0.1 : 0.3),
-                    radius: configuration.isPressed ? 4 : 8,
-                    y: configuration.isPressed ? 2 : 4)
-            .animation(.easeOut(duration: 0.12), value: configuration.isPressed)
-    }
-}
 
 // MARK: - Content View
 
 struct ContentView: View {
+    @EnvironmentObject var loc: LocalizationManager
     @StateObject private var cam = CameraManager()
 
-    @State private var screenBrightness: Double = 0.88
-    @State private var colorBrightness: Double = 0.0
     @State private var currentPresetId = 1
+    @State private var isMirrored = true
+    @State private var screenBrightness: Double = 0.88
     @State private var capturedImage: UIImage?
     @State private var showingPreview = false
     @State private var showingPresets = false
     @State private var showingPermissionAlert = false
     @State private var flashWhite = false
-    @State private var viewfinderWidth: CGFloat = 280
-    @State private var pendingPresetId: Int?
-    @State private var hapticMilestones: Set<Int> = []
-
-    private let minViewfinderWidth: CGFloat = 220
-    private let maxViewfinderWidth: CGFloat = 340
-    private let viewfinderAspect: CGFloat = 4 / 3
+    @State private var customPresets: [LightPreset] = []
+    @State private var showingColorEditor = false
+    @State private var editingPreset: LightPreset?
+    @State private var showingLanguagePicker = false
+    @State private var deleteMode = false
+    private let viewfinderWidth: CGFloat = 280
+    private let viewfinderHeight: CGFloat = 280 * 4 / 3
 
     private let presets: [LightPreset] = [
-        LightPreset(id: 0, name: "纯白", red: 1.0, green: 1.0, blue: 1.0, temp: 6500, defaultScreenBrightness: 0.95),
-        LightPreset(id: 1, name: "日落咖啡馆", red: 1.0, green: 0.55, blue: 0.20, temp: 3200, defaultScreenBrightness: 0.88),
-        LightPreset(id: 2, name: "烛光暖调", red: 1.0, green: 0.40, blue: 0.10, temp: 2000, defaultScreenBrightness: 0.75),
-        LightPreset(id: 3, name: "阴天自然", red: 0.68, green: 0.78, blue: 0.90, temp: 7500, defaultScreenBrightness: 0.85, defaultColorBrightness: 0.3),
-        LightPreset(id: 4, name: "暖黄灯光", red: 1.0, green: 0.82, blue: 0.45, temp: 4000, defaultScreenBrightness: 0.88),
-        LightPreset(id: 5, name: "粉红柔光", red: 1.0, green: 0.50, blue: 0.60, temp: 3500, defaultScreenBrightness: 0.82, defaultColorBrightness: 0.4),
-        LightPreset(id: 6, name: "薰衣草", red: 0.78, green: 0.65, blue: 1.0, temp: 5000, defaultScreenBrightness: 0.85, defaultColorBrightness: 0.35),
-        LightPreset(id: 7, name: "薄荷清冷", red: 0.65, green: 0.88, blue: 0.80, temp: 6800, defaultScreenBrightness: 0.88),
+        LightPreset(id: 0, name: "Pure White",  red: 1.0,  green: 1.0,  blue: 1.0,  temp: 6500, defaultScreenBrightness: 0.95),
+        LightPreset(id: 1, name: "Warm Glow",  red: 1.0,  green: 0.55, blue: 0.20, temp: 3200, defaultScreenBrightness: 0.88),
+        LightPreset(id: 2, name: "Candlelight", red: 1.0,  green: 0.40, blue: 0.10, temp: 2000, defaultScreenBrightness: 0.75),
+        LightPreset(id: 3, name: "Cloudy",      red: 0.68, green: 0.78, blue: 0.90, temp: 7500, defaultScreenBrightness: 0.85, defaultColorBrightness: 0.3),
+        LightPreset(id: 4, name: "Warm Amber",  red: 1.0,  green: 0.82, blue: 0.45, temp: 4000, defaultScreenBrightness: 0.88),
+        LightPreset(id: 5, name: "Soft Pink",   red: 1.0,  green: 0.50, blue: 0.60, temp: 3500, defaultScreenBrightness: 0.82, defaultColorBrightness: 0.4),
+        LightPreset(id: 6, name: "Lavender", red: 0.78, green: 0.65, blue: 1.0, temp: 5000, defaultScreenBrightness: 0.85, defaultColorBrightness: 0.35,
+                    mode: .gradientTopBottom, secondRed: 0.91, secondGreen: 0.84, secondBlue: 0.98),
+        LightPreset(id: 7, name: "Sunset Split", red: 1.0, green: 0.55, blue: 0.26, temp: 3800, defaultScreenBrightness: 0.88,
+                    mode: .dualLeftRight, secondRed: 0.42, secondGreen: 0.30, secondBlue: 0.72),
     ]
+
+    private var allPresets: [LightPreset] { presets + customPresets }
 
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                // 补光背景
-                currentPreset.uiColor.swiftUIColor
-                    .opacity(screenBrightness)
+                // Fill light background
+                fillLightBackground
                     .animation(.easeInOut(duration: 0.35), value: currentPresetId)
-                    .animation(.easeInOut(duration: 0.2), value: screenBrightness)
+                    .simultaneousGesture(
+                        DragGesture(minimumDistance: 50)
+                            .onEnded { value in
+                                let horizontal = abs(value.translation.width)
+                                let vertical = abs(value.translation.height)
+                                guard horizontal > vertical else { return }
 
-                // 颜色亮度叠加
-                currentPreset.uiColor.swiftUIColor
-                    .opacity(colorBrightness * 0.35)
-                    .animation(.easeInOut(duration: 0.25), value: colorBrightness)
+                                let all = allPresets
+                                guard let currentIdx = all.firstIndex(where: { $0.id == currentPresetId }),
+                                      all.count > 1 else { return }
 
-                // 闪光
+                                if value.translation.width < 0, currentIdx < all.count - 1 {
+                                    withAnimation(.easeInOut(duration: 0.25)) {
+                                        currentPresetId = all[currentIdx + 1].id
+                                    }
+                                    UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                                } else if value.translation.width > 0, currentIdx > 0 {
+                                    withAnimation(.easeInOut(duration: 0.25)) {
+                                        currentPresetId = all[currentIdx - 1].id
+                                    }
+                                    UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                                }
+                            }
+                    )
+
+                // Color brightness overlay
+                currentPreset.color
+                    .opacity(currentPreset.defaultColorBrightness * 0.35)
+
+                // Flash
                 if flashWhite {
                     Color.white.ignoresSafeArea().transition(.opacity)
                 }
@@ -235,119 +85,198 @@ struct ContentView: View {
                 }
                 .padding(.bottom, geometry.safeAreaInsets.bottom + 8)
 
-                // 拍照预览
+                // Language button - top right
+                VStack {
+                    HStack {
+                        Spacer()
+                        languageButton
+                    }
+                    Spacer()
+                }
+                .padding(.top, geometry.safeAreaInsets.top + 8)
+                .padding(.trailing, 16)
+
+                // Photo preview
                 if showingPreview, let img = capturedImage {
                     photoPreview(img)
+                }
+
+                // Language picker overlay
+                if showingLanguagePicker {
+                    languagePickerOverlay
                 }
             }
         }
         .background(Color.black)
         .ignoresSafeArea()
         .onAppear {
-            #if targetEnvironment(simulator)
-            SimulatorCamera.configure(host: "127.0.0.1", port: 9876)
-            #else
             cam.start()
-            #endif
-            applyPresetValues()
+            customPresets = UserDefaults.standard.loadCustomPresets()
+            screenBrightness = currentPreset.defaultScreenBrightness
             UIScreen.main.brightness = screenBrightness
         }
         .onDisappear { cam.stop() }
-        .onChange(of: currentPresetId) { _ in applyPresetValues() }
-        .onChange(of: screenBrightness) { UIScreen.main.brightness = $0 }
+        .onChange(of: currentPresetId) { _ in
+            screenBrightness = currentPreset.defaultScreenBrightness
+            UIScreen.main.brightness = screenBrightness
+        }
         .sheet(isPresented: $showingPresets) { presetPicker }
-        .alert("摄像头权限被拒绝", isPresented: $showingPermissionAlert) {
-            Button("打开设置", action: openSettings)
-            Button("取消", role: .cancel) {}
+        .sheet(isPresented: $showingColorEditor) {
+            ColorPresetEditor(customPresets: $customPresets, isPresented: $showingColorEditor,
+                              editingPreset: editingPreset)
+                .environmentObject(loc)
+                .presentationDetents([.medium])
+                .presentationDragIndicator(.hidden)
+        }
+        .alert(loc.string("camera_permission_denied"), isPresented: $showingPermissionAlert) {
+            Button(loc.string("open_settings"), action: openSettings)
+            Button(loc.string("cancel"), role: .cancel) {}
         } message: {
-            Text("请在系统设置中允许补光相机访问摄像头")
+            Text(loc.string("camera_permission_message"))
         }
         .onChange(of: cam.permissionDenied) { denied in
             if denied { showingPermissionAlert = true }
         }
     }
 
+    // MARK: - Language Button
+
+    private var languageButton: some View {
+        Button {
+            withAnimation(.easeInOut(duration: 0.2)) {
+                showingLanguagePicker.toggle()
+            }
+        } label: {
+            Text(loc.currentLanguage.shortName)
+                .font(.system(size: 11, weight: .bold, design: .rounded))
+                .foregroundColor(contrastColor.opacity(0.7))
+                .padding(.horizontal, 10)
+                .padding(.vertical, 6)
+        }
+    }
+
+    // MARK: - Language Picker Overlay
+
+    private var languagePickerOverlay: some View {
+        ZStack {
+            Color.black.opacity(0.3)
+                .ignoresSafeArea()
+                .onTapGesture {
+                    withAnimation { showingLanguagePicker = false }
+                }
+
+            VStack(spacing: 0) {
+                Text(loc.string("language"))
+                    .font(.system(size: 15, weight: .bold))
+                    .foregroundColor(.primary)
+                    .padding(.bottom, 12)
+
+                ForEach(AppLanguage.allCases, id: \.self) { lang in
+                    Button {
+                        withAnimation {
+                            loc.currentLanguage = lang
+                            showingLanguagePicker = false
+                        }
+                    } label: {
+                        HStack {
+                            Text(lang.displayName)
+                                .font(.system(size: 16))
+                                .foregroundColor(.primary)
+                            Spacer()
+                            if loc.currentLanguage == lang {
+                                Image(systemName: "checkmark")
+                                    .font(.system(size: 14, weight: .semibold))
+                                    .foregroundColor(.accentColor)
+                            }
+                        }
+                        .padding(.vertical, 12)
+                        .padding(.horizontal, 4)
+                    }
+                    if lang != AppLanguage.allCases.last {
+                        Divider()
+                    }
+                }
+            }
+            .padding(20)
+            .frame(width: 220)
+            .background(.regularMaterial)
+            .clipShape(RoundedRectangle(cornerRadius: 16))
+            .shadow(color: .black.opacity(0.2), radius: 20, y: 10)
+        }
+    }
+
+    // MARK: - Background
+
+    @ViewBuilder
+    private var fillLightBackground: some View {
+        switch currentPreset.mode {
+        case .solid:
+            currentPreset.color.opacity(screenBrightness)
+        case .gradientTopBottom:
+            LinearGradient(
+                colors: [currentPreset.color, currentPreset.secondColor],
+                startPoint: .top,
+                endPoint: .bottom
+            ).opacity(screenBrightness)
+        case .dualLeftRight:
+            HStack(spacing: 0) {
+                currentPreset.color
+                currentPreset.secondColor
+            }.opacity(screenBrightness)
+        }
+    }
+
     // MARK: - Viewfinder
 
     private var viewfinderArea: some View {
-        ZStack(alignment: .bottomTrailing) {
-            #if targetEnvironment(simulator)
-            SimulatorCameraPreviewView()
-                .clipShape(RoundedRectangle(cornerRadius: 26))
-            #else
-            if cam.isSessionReady {
-                CameraPreview(session: cam.session, isFront: cam.isFrontCamera)
-                    .clipShape(RoundedRectangle(cornerRadius: 26))
-            } else {
+        ViewfinderPreview(cam: cam, isMirrored: isMirrored)
+            .clipShape(RoundedRectangle(cornerRadius: 26))
+            .frame(width: viewfinderWidth, height: viewfinderHeight)
+            .overlay(
                 RoundedRectangle(cornerRadius: 26)
-                    .fill(Color(white: 0.08))
-                    .overlay {
-                        VStack(spacing: 14) {
-                            ProgressView().tint(.white.opacity(0.5))
-                            Text("正在启动摄像头...")
-                                .font(.system(size: 13))
-                                .foregroundColor(.white.opacity(0.35))
-                        }
-                    }
-            }
-            #endif
-
-            resizeHandle
-                .padding(.trailing, 8)
-                .padding(.bottom, 8)
-        }
-        .frame(width: viewfinderWidth, height: viewfinderWidth * viewfinderAspect)
-        .overlay(
-            RoundedRectangle(cornerRadius: 26)
-                .stroke(Color.white.opacity(0.12), lineWidth: 1)
-        )
-        .shadow(color: .black.opacity(0.5), radius: 24, y: 12)
-    }
-
-    // MARK: Resize Handle
-
-    private var resizeHandle: some View {
-        ZStack {
-            RoundedRectangle(cornerRadius: 8)
-                .fill(Color.white.opacity(0.12))
-                .frame(width: 32, height: 32)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 8)
-                        .stroke(Color.white.opacity(0.08), lineWidth: 0.5)
-                )
-            Image(systemName: "arrow.up.backward.and.arrow.down.forward")
-                .font(.system(size: 10, weight: .semibold))
-                .foregroundColor(.white.opacity(0.6))
-        }
-        .contentShape(Rectangle())
-        .gesture(
-            DragGesture()
-                .onChanged { value in
-                    let delta = -value.translation.height * 0.8
-                    viewfinderWidth = min(max(viewfinderWidth + delta, minViewfinderWidth), maxViewfinderWidth)
-                }
-        )
+                    .stroke(Color.white.opacity(0.12), lineWidth: 1)
+            )
+            .shadow(color: .black.opacity(0.5), radius: 24, y: 12)
     }
 
     // MARK: - Bottom Controls
 
     private var bottomControls: some View {
         VStack(spacing: 14) {
-            Text(currentPreset.name)
-                .font(.system(size: 16, weight: .semibold))
-                .foregroundColor(contrastColor)
+            // Screen brightness slider
+            HStack(spacing: 12) {
+                ZStack {
+                    Circle()
+                        .fill(.ultraThinMaterial)
+                        .frame(width: 32, height: 32)
+                    Image(systemName: "sun.max.fill")
+                        .font(.system(size: 15))
+                        .foregroundColor(currentPreset.color)
+                }
+
+                Slider(value: $screenBrightness, in: 0.0...1.0)
+                    .tint(currentPreset.color)
+                    .onChange(of: screenBrightness) { newValue in
+                        UIScreen.main.brightness = newValue
+                    }
+
+                Text("\(Int(screenBrightness * 100))%")
+                    .font(.system(size: 12, weight: .semibold, design: .rounded))
+                    .foregroundColor(contrastColor)
+                    .frame(width: 38, alignment: .trailing)
+            }
+            .padding(.horizontal, 4)
 
             HStack(spacing: 44) {
-                // 预设
+                // Preset
                 Button { showingPresets = true } label: {
-                    Circle()
-                        .fill(currentPreset.uiColor.swiftUIColor)
-                        .frame(width: 42, height: 42)
-                        .overlay(Circle().stroke(contrastColor.opacity(0.2), lineWidth: 1.5))
+                    RoundedRectangle(cornerRadius: 10)
+                        .fill(currentPreset.color)
+                        .frame(width: 44, height: 44)
                         .shadow(color: .black.opacity(0.15), radius: 6, y: 3)
                 }
 
-                // 快门
+                // Shutter
                 Button { triggerCapture() } label: {
                     ZStack {
                         Circle()
@@ -356,109 +285,65 @@ struct ContentView: View {
                         Circle()
                             .fill(Color.white)
                             .frame(width: 62, height: 62)
-                        Circle()
-                            .stroke(Color.white.opacity(0.5), lineWidth: 1.5)
-                            .frame(width: 76, height: 76)
+                            .overlay(Circle().fill(currentPreset.color.opacity(0.08)))
                     }
                 }
                 .buttonStyle(ShutterButtonStyle())
-                #if !targetEnvironment(simulator)
                 .disabled(!cam.isSessionReady)
-                #endif
 
-                // 翻转摄像头
+                // Mirror toggle
                 Button {
-                    cam.switchCamera()
+                    isMirrored.toggle()
                     UIImpactFeedbackGenerator(style: .light).impactOccurred()
                 } label: {
-                    Image(systemName: "arrow.triangle.2.circlepath.camera.fill")
-                        .font(.system(size: 22))
-                        .foregroundColor(contrastColor)
-                        .frame(width: 42, height: 42)
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 10)
+                            .fill(.white.opacity(0.08))
+                            .frame(width: 44, height: 44)
+
+                        RoundedRectangle(cornerRadius: 10)
+                            .stroke(.white.opacity(0.15), lineWidth: 1)
+                            .frame(width: 44, height: 44)
+
+                        Image(systemName: "arrow.left.arrow.right")
+                            .font(.system(size: 18, weight: .light))
+                            .foregroundColor(contrastColor)
+                    }
+                    .shadow(color: .black.opacity(0.25), radius: 10, y: 5)
                 }
             }
-
-            slidersArea
         }
         .padding(.bottom, 48)
-    }
-
-    // MARK: Sliders
-
-    private var slidersArea: some View {
-        VStack(spacing: 6) {
-            HStack(spacing: 8) {
-                Image(systemName: "sun.min.fill")
-                    .font(.system(size: 10))
-                    .foregroundColor(contrastColor.opacity(0.4))
-                    .frame(width: 14)
-                sliderTrack(value: $screenBrightness, thumbColor: .white)
-                Image(systemName: "sun.max.fill")
-                    .font(.system(size: 13))
-                    .foregroundColor(contrastColor.opacity(0.4))
-                    .frame(width: 14)
-            }
-
-            HStack(spacing: 8) {
-                Image(systemName: "paintbrush.fill")
-                    .font(.system(size: 10))
-                    .foregroundColor(contrastColor.opacity(0.4))
-                    .frame(width: 14)
-                sliderTrack(value: $colorBrightness, thumbColor: currentPreset.uiColor.swiftUIColor)
-                Text("\(Int(colorBrightness * 100))%")
-                    .font(.system(size: 10, weight: .medium))
-                    .foregroundColor(contrastColor.opacity(0.5))
-                    .frame(width: 30, alignment: .trailing)
-            }
-        }
-        .padding(.horizontal, 40)
-    }
-
-    private func sliderTrack(value: Binding<Double>, thumbColor: Color) -> some View {
-        GeometryReader { geo in
-            ZStack(alignment: .leading) {
-                Capsule().fill(Color.white.opacity(0.12)).frame(height: 5)
-                Capsule().fill(Color.white.opacity(0.35))
-                    .frame(width: geo.size.width * value.wrappedValue, height: 5)
-                Circle()
-                    .fill(thumbColor)
-                    .frame(width: 24, height: 24)
-                    .shadow(color: .black.opacity(0.2), radius: 4, y: 2)
-                    .offset(x: (geo.size.width - 24) * value.wrappedValue)
-                    .gesture(
-                        DragGesture(minimumDistance: 0)
-                            .onChanged { v in
-                                let raw = max(0.0, min(1.0, v.location.x / geo.size.width))
-                                value.wrappedValue = raw
-                                let milestone = Int(raw * 100) / 25 * 25
-                                if [25, 50, 75, 100].contains(milestone),
-                                   !hapticMilestones.contains(milestone) {
-                                    hapticMilestones.insert(milestone)
-                                    UIImpactFeedbackGenerator(style: .light).impactOccurred()
-                                }
-                            }
-                            .onEnded { _ in hapticMilestones = [] }
-                    )
-            }
-        }
-        .frame(height: 28)
     }
 
     // MARK: - Preset Picker
 
     private var presetPicker: some View {
         ZStack {
-            Color(hex: "#1a1a1a").ignoresSafeArea()
+            Color(white: 0.1).ignoresSafeArea()
 
             VStack(spacing: 0) {
                 HStack {
-                    Text("光效预设")
+                    Text(loc.string("light_presets"))
                         .font(.system(size: 17, weight: .bold))
                         .foregroundColor(.white)
                     Spacer()
+                    if deleteMode {
+                        Button {
+                            withAnimation { deleteMode = false }
+                        } label: {
+                            Text("Done")
+                                .font(.system(size: 14, weight: .semibold))
+                                .foregroundColor(.white)
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 6)
+                                .background(Color.white.opacity(0.15))
+                                .clipShape(Capsule())
+                        }
+                    }
                     Button {
                         showingPresets = false
-                        pendingPresetId = nil
+                        deleteMode = false
                     } label: {
                         Image(systemName: "xmark")
                             .font(.system(size: 12, weight: .bold))
@@ -474,42 +359,250 @@ struct ContentView: View {
                 Divider().background(Color.white.opacity(0.08))
 
                 ScrollView {
-                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 80), spacing: 12)], spacing: 12) {
-                        ForEach(presets) { p in
-                            let isSelected = (pendingPresetId ?? currentPresetId) == p.id
-                            Button {
-                                UIImpactFeedbackGenerator(style: .light).impactOccurred()
-                                pendingPresetId = p.id
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
-                                    currentPresetId = p.id
-                                    showingPresets = false
-                                    pendingPresetId = nil
-                                }
-                            } label: {
-                                VStack(spacing: 8) {
-                                    RoundedRectangle(cornerRadius: 14)
-                                        .fill(p.color)
-                                        .frame(height: 70)
-                                        .overlay(
-                                            RoundedRectangle(cornerRadius: 14)
-                                                .stroke(isSelected ? Color.white : .clear, lineWidth: 3)
-                                        )
-                                        .shadow(color: .black.opacity(0.2), radius: 4, y: 2)
-                                    Text(p.name)
-                                        .font(.system(size: 12, weight: isSelected ? .bold : .regular))
-                                        .foregroundColor(.white)
-                                    Text("\(p.temp)K")
-                                        .font(.system(size: 10))
-                                        .foregroundColor(.white.opacity(0.5))
-                                }
+                    VStack(alignment: .leading, spacing: 16) {
+                        // Built-in presets
+                        Text(loc.string("built_in"))
+                            .font(.system(size: 13, weight: .semibold))
+                            .foregroundColor(.white.opacity(0.5))
+                            .padding(.horizontal, 16)
+
+                        LazyVGrid(columns: [GridItem(.adaptive(minimum: 80), spacing: 12)], spacing: 12) {
+                            ForEach(presets) { p in
+                                presetCell(for: p, isCustom: false)
+                                    .opacity(deleteMode ? 0.3 : 1.0)
+                                    .animation(.easeInOut(duration: 0.2), value: deleteMode)
                             }
                         }
+                        .padding(.horizontal, 16)
+
+                        // Custom presets
+                        if !customPresets.isEmpty {
+                            Text(loc.string("custom"))
+                                .font(.system(size: 13, weight: .semibold))
+                                .foregroundColor(.white.opacity(0.5))
+                                .padding(.horizontal, 16)
+
+                            LazyVGrid(columns: [GridItem(.adaptive(minimum: 80), spacing: 12)], spacing: 12) {
+                                ForEach(customPresets) { p in
+                                    presetCell(for: p, isCustom: true)
+                                        .overlay(deleteMode ? deleteOverlay(for: p) : nil)
+                                        .animation(.easeInOut(duration: 0.2), value: deleteMode)
+                                        .onLongPressGesture(minimumDuration: 0.4) {
+                                            if !deleteMode {
+                                                withAnimation { deleteMode = true }
+                                                UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                                            }
+                                        }
+                                        .contextMenu {
+                                            if !deleteMode {
+                                                Button {
+                                                    editCustomPreset(p)
+                                                } label: {
+                                                    Label("Edit Preset", systemImage: "pencil")
+                                                }
+                                                Button(role: .destructive) {
+                                                    deleteCustomPreset(p)
+                                                } label: {
+                                                    Label(loc.string("delete_preset"), systemImage: "trash")
+                                                }
+                                            }
+                                        }
+                                }
+
+                                // Add cell in grid
+                                addPresetCell
+                            }
+                            .padding(.horizontal, 16)
+                        } else {
+                            LazyVGrid(columns: [GridItem(.adaptive(minimum: 80), spacing: 12)], spacing: 12) {
+                                addPresetCell
+                            }
+                            .padding(.horizontal, 16)
+                        }
                     }
-                    .padding(16)
+                    .padding(.vertical, 16)
                 }
             }
         }
         .preferredColorScheme(.dark)
+    }
+
+    private var addPresetCell: some View {
+        Button {
+            editingPreset = nil
+            showingPresets = false
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                showingColorEditor = true
+            }
+        } label: {
+            VStack(spacing: 8) {
+                RoundedRectangle(cornerRadius: 14)
+                    .stroke(Color.white.opacity(0.15), style: StrokeStyle(lineWidth: 1.5, dash: [5, 3]))
+                    .frame(height: 70)
+                    .overlay {
+                        Image(systemName: "plus")
+                            .font(.system(size: 22, weight: .light))
+                            .foregroundColor(.white.opacity(0.4))
+                    }
+
+                Text("Add")
+                    .font(.system(size: 12, weight: .regular))
+                    .foregroundColor(.white.opacity(0.5))
+                Text("Custom")
+                    .font(.system(size: 10))
+                    .foregroundColor(.white.opacity(0.3))
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func deleteOverlay(for p: LightPreset) -> some View {
+        VStack {
+            HStack {
+                Spacer()
+                Button {
+                    withAnimation {
+                        deleteCustomPreset(p)
+                        if customPresets.isEmpty { deleteMode = false }
+                    }
+                } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.system(size: 22))
+                        .foregroundColor(.white)
+                        .background(Circle().fill(Color.red).frame(width: 20, height: 20))
+                        .shadow(radius: 4)
+                }
+                .padding(4)
+            }
+            Spacer()
+        }
+    }
+
+    @ViewBuilder
+    private func presetCell(for p: LightPreset, isCustom: Bool = false) -> some View {
+        let isSelected = currentPresetId == p.id
+        Button {
+            UIImpactFeedbackGenerator(style: .light).impactOccurred()
+            currentPresetId = p.id
+            showingPresets = false
+        } label: {
+            VStack(spacing: 8) {
+                ZStack {
+                    presetSwatch(for: p)
+                        .frame(height: 70)
+                        .clipShape(RoundedRectangle(cornerRadius: 14))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 14)
+                                .stroke(isSelected && !deleteMode ? Color.white : .clear, lineWidth: 3)
+                        )
+                        .overlay(
+                            deleteMode && isCustom ? Color.red.opacity(0.25) : Color.clear
+                        )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 14)
+                                .stroke(deleteMode && isCustom ? Color.red.opacity(0.5) : .clear, lineWidth: 2)
+                        )
+                        .shadow(color: .black.opacity(0.2), radius: 4, y: 2)
+                        .scaleEffect(isSelected && !deleteMode ? 1.03 : 1.0)
+
+                    // Selected checkmark
+                    if isSelected && !deleteMode {
+                        Image(systemName: "checkmark.circle.fill")
+                            .font(.system(size: 22))
+                            .foregroundColor(.white)
+                            .shadow(radius: 4)
+                    }
+
+                    // Mode icon for gradient/dual
+                    if p.mode != .solid {
+                        VStack {
+                            Spacer()
+                            HStack {
+                                Spacer()
+                                Image(systemName: p.mode == .gradientTopBottom ? "square.fill.text.grid.1x2" : "square.split.2x1.fill")
+                                    .font(.system(size: 10))
+                                    .foregroundColor(.white.opacity(0.7))
+                                    .padding(4)
+                                    .background(.black.opacity(0.3))
+                                    .clipShape(RoundedRectangle(cornerRadius: 4))
+                                    .padding(4)
+                            }
+                        }
+                    }
+
+                    // Custom preset badge
+                    if p.isCustom {
+                        VStack {
+                            HStack {
+                                Circle()
+                                    .fill(Color.white.opacity(0.6))
+                                    .frame(width: 5, height: 5)
+                                    .padding(6)
+                                Spacer()
+                            }
+                            Spacer()
+                        }
+                    }
+                }
+                .animation(.easeInOut(duration: 0.2), value: isSelected)
+
+                Text(loc.presetName(for: p))
+                    .font(.system(size: 12, weight: isSelected ? .bold : .regular))
+                    .foregroundColor(.white)
+                    .lineLimit(1)
+
+                if p.isCustom {
+                    Text(modeLabel(p.mode))
+                        .font(.system(size: 10))
+                        .foregroundColor(.white.opacity(0.5))
+                }
+            }
+        }
+    }
+
+    private func modeLabel(_ mode: PresetMode) -> String {
+        switch mode {
+        case .solid: return loc.string("mode_solid")
+        case .gradientTopBottom: return loc.string("mode_gradient")
+        case .dualLeftRight: return loc.string("mode_dual")
+        }
+    }
+
+    private func editCustomPreset(_ p: LightPreset) {
+        editingPreset = p
+        showingPresets = false
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            showingColorEditor = true
+        }
+    }
+
+    @ViewBuilder
+    private func presetSwatch(for p: LightPreset) -> some View {
+        switch p.mode {
+        case .solid:
+            Rectangle().fill(p.color)
+        case .gradientTopBottom:
+            Rectangle().fill(
+                LinearGradient(colors: [p.color, p.secondColor], startPoint: .top, endPoint: .bottom)
+            )
+        case .dualLeftRight:
+            HStack(spacing: 0) {
+                Rectangle().fill(p.color)
+                Rectangle().fill(p.secondColor)
+            }
+        }
+    }
+
+    private func deleteCustomPreset(_ p: LightPreset) {
+        withAnimation {
+            customPresets.removeAll { $0.id == p.id }
+            UserDefaults.standard.saveCustomPresets(customPresets)
+            if currentPresetId == p.id {
+                currentPresetId = 0
+                screenBrightness = currentPreset.defaultScreenBrightness
+                UIScreen.main.brightness = screenBrightness
+            }
+        }
     }
 
     // MARK: - Photo Preview
@@ -525,13 +618,12 @@ struct ContentView: View {
                             .aspectRatio(contentMode: .fill)
                             .frame(width: 180, height: 180 * 4 / 3)
                             .clipShape(RoundedRectangle(cornerRadius: 18))
-                        Text("已保存到相册")
+                        Text(loc.string("saved_to_library"))
                             .font(.system(size: 13))
                             .foregroundColor(.white.opacity(0.6))
                     }
                     .padding(24)
                     .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 22))
-                    .onTapGesture { showingPreview = false }
                     .transition(.scale.combined(with: .opacity))
                     .position(x: geo.size.width / 2, y: geo.size.height / 2)
                 }
@@ -541,9 +633,7 @@ struct ContentView: View {
     // MARK: - Actions
 
     private func triggerCapture() {
-        #if !targetEnvironment(simulator)
         guard cam.isSessionReady else { return }
-        #endif
         UIImpactFeedbackGenerator(style: .heavy).impactOccurred()
 
         withAnimation(.easeOut(duration: 0.12)) { flashWhite = true }
@@ -551,32 +641,18 @@ struct ContentView: View {
             withAnimation(.easeIn(duration: 0.15)) { flashWhite = false }
         }
 
-        #if targetEnvironment(simulator)
-        // 模拟器中生成占位图代替实际拍照
-        let renderer = UIGraphicsImageRenderer(size: CGSize(width: 360, height: 480))
-        let placeholder = renderer.image { ctx in
-            currentPreset.uiColor.setFill()
-            ctx.fill(CGRect(x: 0, y: 0, width: 360, height: 480))
-        }
-        capturedImage = placeholder
-        withAnimation(.easeOut(duration: 0.25)) { showingPreview = true }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
-            if showingPreview { showingPreview = false }
-        }
-        #else
-        cam.capture { image in
-            capturedImage = image
-            withAnimation(.easeOut(duration: 0.25)) { showingPreview = true }
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
-                if showingPreview { showingPreview = false }
+        cam.capture { result in
+            switch result {
+            case .success(let image):
+                capturedImage = image
+                withAnimation(.easeOut(duration: 0.25)) { showingPreview = true }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
+                    if showingPreview { showingPreview = false }
+                }
+            case .failure:
+                break
             }
         }
-        #endif
-    }
-
-    private func applyPresetValues() {
-        screenBrightness = currentPreset.defaultScreenBrightness
-        colorBrightness = currentPreset.defaultColorBrightness
     }
 
     private func openSettings() {
@@ -587,35 +663,26 @@ struct ContentView: View {
     // MARK: - Computed
 
     private var currentPreset: LightPreset {
-        presets.first(where: { $0.id == currentPresetId }) ?? presets[0]
+        allPresets.first(where: { $0.id == currentPresetId }) ?? presets[0]
+    }
+
+    private func colorLuminance(_ color: UIColor) -> CGFloat {
+        var r: CGFloat = 0, g: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
+        color.getRed(&r, green: &g, blue: &b, alpha: &a)
+        return 0.299 * r + 0.587 * g + 0.114 * b
     }
 
     private var contrastColor: Color {
-        var r: CGFloat = 0, g: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
-        currentPreset.uiColor.getRed(&r, green: &g, blue: &b, alpha: &a)
-        let luminance = (0.299 * r + 0.587 * g + 0.114 * b) * screenBrightness
-        return luminance > 0.55 ? Color.black.opacity(0.55) : Color.white.opacity(0.75)
-    }
-}
-
-// MARK: - Extensions
-
-extension UIColor {
-    var swiftUIColor: Color { Color(self) }
-}
-
-extension Color {
-    init(hex: String) {
-        let hex = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
-        var int: UInt64 = 0
-        Scanner(string: hex).scanHexInt64(&int)
-        let a, r, g, b: UInt64
-        switch hex.count {
-        case 3: (a, r, g, b) = (255, (int >> 8) * 17, (int >> 4 & 0xF) * 17, (int & 0xF) * 17)
-        case 6: (a, r, g, b) = (255, int >> 16, int >> 8 & 0xFF, int & 0xFF)
-        case 8: (a, r, g, b) = (int >> 24, int >> 16 & 0xFF, int >> 8 & 0xFF, int & 0xFF)
-        default: (a, r, g, b) = (255, 0, 0, 0)
+        let luminance: CGFloat
+        switch currentPreset.mode {
+        case .solid:
+            luminance = colorLuminance(currentPreset.uiColor)
+        case .gradientTopBottom, .dualLeftRight:
+            let l1 = colorLuminance(currentPreset.uiColor)
+            let l2 = colorLuminance(currentPreset.secondUIColor)
+            luminance = (l1 + l2) / 2.0
         }
-        self.init(.sRGB, red: Double(r) / 255, green: Double(g) / 255, blue: Double(b) / 255, opacity: Double(a) / 255)
+        let adjusted = luminance * screenBrightness
+        return adjusted > 0.55 ? Color.black.opacity(0.55) : Color.white.opacity(0.75)
     }
 }

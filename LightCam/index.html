@@ -312,7 +312,7 @@
             box-shadow: 0 2px 12px rgba(0,0,0,0.2);
         }
 
-        /* 色温滑块 */
+        /* 亮度滑块 */
         .temp-slider-container {
             background: rgba(255,255,255,0.4);
             backdrop-filter: blur(12px);
@@ -346,7 +346,7 @@
         .slider-track {
             flex: 1;
             height: 5px;
-            background: linear-gradient(to right, #85B7EB, #FFFFFF, #FFB380);
+            background: linear-gradient(to right, #666666, #FFFFFF);
             border-radius: 3px;
             position: relative;
             cursor: pointer;
@@ -992,17 +992,16 @@
                 <button class="shutter-btn" id="shutterBtn"></button>
                 <button class="switch-cam-btn" id="switchCamBtn">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="1 4 1 10 7 10"></polyline>
-                        <polyline points="23 20 23 14 17 14"></polyline>
-                        <path d="M21 10A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3 14"></path>
+                        <line x1="12" y1="3" x2="12" y2="21"></line>
+                        <polyline points="9 7 5 11 9 15"></polyline>
+                        <polyline points="15 7 19 11 15 15"></polyline>
                     </svg>
                 </button>
             </div>
 
-            <!-- 滑块容器 -->
+            <!-- 屏幕亮度滑块 -->
             <div class="temp-slider-container">
-                <!-- 屏幕亮度滑块 -->
-                <div class="slider-row" style="margin-bottom: 12px;">
+                <div class="slider-row">
                     <div class="slider-icon">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <circle cx="12" cy="12" r="5"></circle>
@@ -1016,23 +1015,10 @@
                             <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
                         </svg>
                     </div>
-                    <div class="slider-track" id="brightnessTrack" style="background: linear-gradient(to right, #666666, #FFFFFF);">
+                    <div class="slider-track" id="brightnessTrack">
                         <div class="slider-thumb" id="brightnessThumb"></div>
                     </div>
                     <div class="temp-value" id="brightnessValue">85%</div>
-                </div>
-                
-                <!-- 颜色亮度滑块 -->
-                <div class="slider-row">
-                    <div class="slider-icon">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path>
-                        </svg>
-                    </div>
-                    <div class="slider-track" id="colorBrightnessTrack">
-                        <div class="slider-thumb" id="colorBrightnessThumb"></div>
-                    </div>
-                    <div class="temp-value" id="colorBrightnessValue">100%</div>
                 </div>
             </div>
         </div>
@@ -1114,7 +1100,7 @@
         <div class="photo-info">
             <div class="info-left">
                 <div class="info-dot" id="infoDot"></div>
-                <div class="info-name" id="infoName">日落咖啡馆</div>
+                <div class="info-name" id="infoName"></div>
             </div>
             <div class="info-params" id="infoParams">3200K · 85%</div>
         </div>
@@ -1182,7 +1168,7 @@
             },
             {
                 id: 'sunset',
-                name: '日落咖啡馆',
+                name: '暖调',
                 temp: 3200,
                 brightness: 85,
                 color: 'linear-gradient(135deg, #FFD9A8, #F5C4B3)',
@@ -1472,6 +1458,14 @@
             startCamera();
         }
 
+        // 镜像翻转
+        let isMirrored = true; // 默认前置摄像头已镜像
+        function toggleMirror() {
+            isMirrored = !isMirrored;
+            cameraVideo.style.transform = isMirrored ? 'scaleX(-1)' : 'scaleX(1)';
+            if (navigator.vibrate) navigator.vibrate(10);
+        }
+
         // 点击错误提示重试
         cameraError.addEventListener('click', () => {
             cameraRetryCount = 0;
@@ -1479,17 +1473,15 @@
         });
 
         document.getElementById('switchCamBtn').addEventListener('click', () => {
-            switchCamera();
-            if (navigator.vibrate) navigator.vibrate(10);
+            toggleMirror();
         });
 
         // ── 状态 ────────────────────────────────
-        let currentPresetIndex = 1; // 默认选中"日落咖啡馆"
+        let currentPresetIndex = 1; // 默认选中"暖调"
         let viewfinderWidth = 280;
         let screenBrightness = 85;  // 屏幕亮度 0-100
-        let colorBrightness = 100;  // 颜色亮度 0-100
         let isDragging = false;
-        let draggingSlider = null;  // 记录当前拖动的是哪个滑块
+        let draggingSlider = false;  // 是否正在拖动亮度滑块
         let isResizing = false;     // 是否正在调整取景窗大小
         let resizeStartY = 0;       // 调整开始的Y坐标
         let resizeStartWidth = 0;   // 调整开始时的宽度
@@ -1500,37 +1492,22 @@
         const presetName = document.getElementById('presetName');
         const presetPreview = document.getElementById('presetPreview');
         const brightnessValue = document.getElementById('brightnessValue');
-        const colorBrightnessValue = document.getElementById('colorBrightnessValue');
         const brightnessThumb = document.getElementById('brightnessThumb');
-        const colorBrightnessThumb = document.getElementById('colorBrightnessThumb');
         const brightnessTrack = document.getElementById('brightnessTrack');
-        const colorBrightnessTrack = document.getElementById('colorBrightnessTrack');
         const presetPanel = document.getElementById('presetPanel');
         const presetsGrid = document.getElementById('presetsGrid');
         const photoPopup = document.getElementById('photoPopup');
         const flashOverlay = document.getElementById('flashOverlay');
-        const statusTime = document.getElementById('statusTime');
-
-        // 初始化时间
-        function updateTime() {
-            const now = new Date();
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            statusTime.textContent = `${hours}:${minutes}`;
-        }
-        updateTime();
-        setInterval(updateTime, 60000);
 
         // 应用预设
         function applyPreset(index) {
             currentPresetIndex = index;
             const preset = presets[index];
             screenBrightness = preset.brightness;
-            colorBrightness = 100; // 默认颜色亮度100%
 
             // 应用背景颜色和亮度
             applyLighting();
-            
+
             // 更新预设预览
             if (presetName) presetName.textContent = preset.name;
             presetPreview.style.background = preset.color;
@@ -1542,7 +1519,7 @@
 
             // 更新滑块位置
             updateSliders();
-            
+
             // 更新UI颜色
             updateUIColors(preset);
         }
@@ -1550,83 +1527,25 @@
         // 应用补光效果
         function applyLighting() {
             const preset = presets[currentPresetIndex];
-            let baseColor = preset.color;
-            
-            // 计算最终颜色(应用颜色亮度)
-            let finalColor = baseColor;
-            if (!baseColor.includes('gradient')) {
-                // 纯色:调整亮度
-                finalColor = adjustColorBrightness(baseColor, colorBrightness);
-            }
-            
-            lightingBg.style.background = finalColor;
-            
+            lightingBg.style.background = preset.color;
             // 应用屏幕亮度(通过透明度模拟)
             lightingBg.style.opacity = screenBrightness / 100;
-            
-            // 更新颜色亮度滑块的渐变背景
-            updateColorBrightnessTrack();
-        }
-
-        // 调整颜色亮度
-        function adjustColorBrightness(hex, brightness) {
-            // 将hex转为RGB
-            const r = parseInt(hex.slice(1, 3), 16);
-            const g = parseInt(hex.slice(3, 5), 16);
-            const b = parseInt(hex.slice(5, 7), 16);
-            
-            // 根据亮度调整
-            const factor = brightness / 100;
-            const newR = Math.round(r * factor + 255 * (1 - factor));
-            const newG = Math.round(g * factor + 255 * (1 - factor));
-            const newB = Math.round(b * factor + 255 * (1 - factor));
-            
-            return `#${newR.toString(16).padStart(2, '0')}${newG.toString(16).padStart(2, '0')}${newB.toString(16).padStart(2, '0')}`;
-        }
-
-        // 更新颜色亮度滑块的背景渐变
-        function updateColorBrightnessTrack() {
-            const preset = presets[currentPresetIndex];
-            if (!preset.color.includes('gradient')) {
-                // 对于纯色预设,创建从深色到浅色的渐变
-                // 深色端使用原色,浅色端使用淡化版本
-                const darkColor = preset.color;
-                const lightColor = adjustColorBrightness(preset.color, 30);
-                colorBrightnessTrack.style.background = `linear-gradient(to right, ${lightColor}, ${darkColor})`;
-            } else {
-                // 对于渐变预设,使用灰色渐变
-                colorBrightnessTrack.style.background = 'linear-gradient(to right, #D0D0D0, #505050)';
-            }
         }
 
         // 更新UI颜色（根据背景亮度调整）
         function updateUIColors(preset) {
             const isLight = preset.brightness > 60;
             const textColor = isLight ? 'rgba(0,0,0,0.6)' : 'rgba(255,255,255,0.8)';
-            
-            document.querySelector('.status-bar').style.color = textColor;
+            const statusBar = document.querySelector('.status-bar');
+            if (statusBar) statusBar.style.color = textColor;
             if (presetName) presetName.style.color = textColor;
-            
-            // 更新滑块图标和数值颜色
-            document.querySelectorAll('.slider-icon').forEach(el => {
-                el.style.color = textColor;
-            });
-            brightnessValue.style.color = textColor;
-            colorBrightnessValue.style.color = textColor;
-            
+            const sliderIcon = document.querySelector('.slider-icon');
+            if (sliderIcon) sliderIcon.style.color = textColor;
+            if (brightnessValue) brightnessValue.style.color = textColor;
             const btnColor = isLight ? 'rgba(0,0,0,0.3)' : 'rgba(255,255,255,0.3)';
-            document.querySelector('.shutter-btn').style.borderColor = btnColor;
-            brightnessThumb.style.borderColor = btnColor;
-            colorBrightnessThumb.style.borderColor = btnColor;
-        }
-
-        // 更新滑块显示值和位置
-        function updateSliders() {
-            brightnessValue.textContent = `${screenBrightness}%`;
-            colorBrightnessValue.textContent = `${colorBrightness}%`;
-            
-            brightnessThumb.style.left = `${screenBrightness}%`;
-            colorBrightnessThumb.style.left = `${colorBrightness}%`;
+            const shutterBtn = document.querySelector('.shutter-btn');
+            if (shutterBtn) shutterBtn.style.borderColor = btnColor;
+            if (brightnessThumb) brightnessThumb.style.borderColor = btnColor;
         }
 
         // 更新取景窗尺寸
@@ -1637,86 +1556,64 @@
             viewfinder.style.height = `${height}px`;
         }
 
-        // 滑块拖拽处理
-        function handleSliderInteraction(e, sliderType) {
-            const track = sliderType === 'brightness' ? brightnessTrack : colorBrightnessTrack;
-            const rect = track.getBoundingClientRect();
+        // 更新滑块显示值和位置
+        function updateSliders() {
+            brightnessValue.textContent = `${screenBrightness}%`;
+            brightnessThumb.style.left = `${screenBrightness}%`;
+        }
+
+        // 亮度滑块交互
+        function handleSliderInteraction(e) {
+            const rect = brightnessTrack.getBoundingClientRect();
             const x = (e.type.includes('touch') ? e.touches[0].clientX : e.clientX) - rect.left;
             const percent = Math.max(0, Math.min(100, (x / rect.width) * 100));
-            
-            if (sliderType === 'brightness') {
-                screenBrightness = Math.round(percent);
-            } else {
-                colorBrightness = Math.round(percent);
-            }
-            
+            screenBrightness = Math.round(percent);
             updateSliders();
             applyLighting();
-
-            // 触觉反馈（关键点位）
             if ([25, 50, 75, 100].includes(Math.round(percent))) {
                 if (navigator.vibrate) navigator.vibrate(10);
             }
         }
 
-        // 屏幕亮度滑块
         brightnessTrack.addEventListener('mousedown', (e) => {
             isDragging = true;
-            draggingSlider = 'brightness';
+            draggingSlider = true;
             brightnessThumb.classList.add('dragging');
-            handleSliderInteraction(e, 'brightness');
+            handleSliderInteraction(e);
         });
 
         brightnessTrack.addEventListener('touchstart', (e) => {
             isDragging = true;
-            draggingSlider = 'brightness';
+            draggingSlider = true;
             brightnessThumb.classList.add('dragging');
-            handleSliderInteraction(e, 'brightness');
+            handleSliderInteraction(e);
         });
 
-        // 颜色亮度滑块
-        colorBrightnessTrack.addEventListener('mousedown', (e) => {
-            isDragging = true;
-            draggingSlider = 'color';
-            colorBrightnessThumb.classList.add('dragging');
-            handleSliderInteraction(e, 'color');
-        });
-
-        colorBrightnessTrack.addEventListener('touchstart', (e) => {
-            isDragging = true;
-            draggingSlider = 'color';
-            colorBrightnessThumb.classList.add('dragging');
-            handleSliderInteraction(e, 'color');
-        });
-
-        // 全局移动和释放事件
         document.addEventListener('mousemove', (e) => {
             if (isDragging && draggingSlider) {
-                handleSliderInteraction(e, draggingSlider);
+                handleSliderInteraction(e);
             }
         });
 
         document.addEventListener('touchmove', (e) => {
             if (isDragging && draggingSlider) {
-                handleSliderInteraction(e, draggingSlider);
+                handleSliderInteraction(e);
             }
         });
 
         document.addEventListener('mouseup', () => {
-            if (isDragging) {
+            if (isDragging && draggingSlider) {
                 isDragging = false;
+                draggingSlider = false;
                 brightnessThumb.classList.remove('dragging');
-                colorBrightnessThumb.classList.remove('dragging');
-                draggingSlider = null;
             }
         });
 
         document.addEventListener('touchend', () => {
-            if (isDragging) {
+            if (isDragging && draggingSlider) {
                 isDragging = false;
+                draggingSlider = false;
                 brightnessThumb.classList.remove('dragging');
-                colorBrightnessThumb.classList.remove('dragging');
-                draggingSlider = null;
             }
         });
 
@@ -2298,8 +2195,8 @@
             photoCanvas.width = videoWidth;
             photoCanvas.height = videoHeight;
 
-            // 前置摄像头需要水平翻转
-            if (facingMode === 'user') {
+            // 根据镜像状态决定是否水平翻转
+            if (isMirrored) {
                 photoCtx.save();
                 photoCtx.translate(videoWidth, 0);
                 photoCtx.scale(-1, 1);
@@ -2326,7 +2223,7 @@
             document.getElementById('photoThumbnail').style.background = `url(${dataUrl}) center/cover`;
             document.getElementById('infoDot').style.background = preset.solidColor || preset.color;
             document.getElementById('infoName').textContent = preset.name;
-            document.getElementById('infoParams').textContent = `屏幕${screenBrightness}% · 颜色${colorBrightness}%`;
+            document.getElementById('infoParams').textContent = `屏幕亮度 ${screenBrightness}%`;
 
             photoPopup.classList.add('show');
 

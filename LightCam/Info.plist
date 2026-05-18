@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
     <key>CFBundleDevelopmentRegion</key>
-    <string>zh_CN</string>
+    <string>en_US</string>
     <key>CFBundleDisplayName</key>
-    <string>补光相机</string>
+    <string>LightCam</string>
     <key>CFBundleExecutable</key>
     <string>LightCam</string>
     <key>CFBundleIdentifier</key>
@@ -23,9 +23,9 @@
     <key>LSRequiresIPhoneOS</key>
     <true/>
     <key>NSCameraUsageDescription</key>
-    <string>需要访问相机进行拍照</string>
+    <string>This app needs camera access to capture photos</string>
     <key>NSPhotoLibraryAddUsageDescription</key>
-    <string>需要保存照片到您的相册</string>
+    <string>Photos are saved to your photo library</string>
     <key>UIApplicationSceneManifest</key>
     <dict>
         <key>UIApplicationSupportsMultipleScenes</key>

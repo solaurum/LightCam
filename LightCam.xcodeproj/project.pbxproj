@@ -9,6 +9,12 @@
 /* Begin PBXBuildFile section */
 		E36C0D359DE948BC8AD857E8 /* LightCamApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95CD8E2BDF284E97AD8DF0BD; };
 		5FFD9A7BB7E1488983B368B3 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D494C275E2994F22A899CF8A; };
+		A10000000000000000000001 /* CameraManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000001; };
+		A20000000000000000000002 /* LightPreset.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000002; };
+		A30000000000000000000003 /* CameraPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = B30000000000000000000003; };
+		A40000000000000000000004 /* ShutterButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = B40000000000000000000004; };
+		A50000000000000000000005 /* ColorPresetEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B50000000000000000000005; };
+		A60000000000000000000006 /* LocalizationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B60000000000000000000006; };
 		CF5CD8592B7541C485EDA64D /* index.html in Resources */ = {isa = PBXBuildFile; fileRef = 8662946204E94EE5A0FDE72D; };
 		A7CFBE2A6EAE45889B5F41B5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F26391DDB3444A0388A749D8; };
 /* End PBXBuildFile section */
@@ -20,6 +26,12 @@
 		EF98BDC838D942DFA16DCCE1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F26391DDB3444A0388A749D8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		B826C4FDDF9D4161BAA957C3 /* LightCam.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LightCam.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B10000000000000000000001 /* CameraManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraManager.swift; sourceTree = "<group>"; };
+		B20000000000000000000002 /* LightPreset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightPreset.swift; sourceTree = "<group>"; };
+		B30000000000000000000003 /* CameraPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraPreview.swift; sourceTree = "<group>"; };
+		B40000000000000000000004 /* ShutterButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShutterButtonStyle.swift; sourceTree = "<group>"; };
+		B50000000000000000000005 /* ColorPresetEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorPresetEditor.swift; sourceTree = "<group>"; };
+		B60000000000000000000006 /* LocalizationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalizationManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -36,6 +48,12 @@
 			children = (
 				95CD8E2BDF284E97AD8DF0BD /* LightCamApp.swift */,
 				D494C275E2994F22A899CF8A /* ContentView.swift */,
+				B10000000000000000000001 /* CameraManager.swift */,
+				B20000000000000000000002 /* LightPreset.swift */,
+				B30000000000000000000003 /* CameraPreview.swift */,
+				B40000000000000000000004 /* ShutterButtonStyle.swift */,
+				B50000000000000000000005 /* ColorPresetEditor.swift */,
+				B60000000000000000000006 /* LocalizationManager.swift */,
 				8662946204E94EE5A0FDE72D /* index.html */,
 				EF98BDC838D942DFA16DCCE1 /* Info.plist */,
 				F26391DDB3444A0388A749D8 /* Assets.xcassets */,
@@ -86,11 +104,11 @@
 			};
 			buildConfigurationList = D7E6CDB33A4A483A8AA91DE2;
 			compatibilityVersion = "Xcode 14.0";
-			developmentRegion = "zh-Hans";
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
-				"zh-Hans",
+				en,
 			);
 			mainGroup = 3017900FE3644C03B9135E1B;
 			packageReferences = (
@@ -124,6 +142,12 @@
 			files = (
 				E36C0D359DE948BC8AD857E8 /* LightCamApp.swift in Sources */,
 				5FFD9A7BB7E1488983B368B3 /* ContentView.swift in Sources */,
+				A10000000000000000000001 /* CameraManager.swift in Sources */,
+				A20000000000000000000002 /* LightPreset.swift in Sources */,
+				A30000000000000000000003 /* CameraPreview.swift in Sources */,
+				A40000000000000000000004 /* ShutterButtonStyle.swift in Sources */,
+				A50000000000000000000005 /* ColorPresetEditor.swift in Sources */,
+				A60000000000000000000006 /* LocalizationManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -155,7 +179,7 @@
 				ENABLE_TESTABILITY = YES;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -178,7 +202,7 @@
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_OPTIMIZATION_LEVEL = s;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
@@ -197,14 +221,14 @@
 				DEVELOPMENT_TEAM = "";
 				CURRENT_PROJECT_VERSION = 1;
 				INFOPLIST_FILE = LightCam/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "补光相机";
-				INFOPLIST_KEY_NSCameraUsageDescription = "需要访问相机进行拍照";
-				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "需要保存照片到您的相册";
+				INFOPLIST_KEY_CFBundleDisplayName = "LightCam";
+				INFOPLIST_KEY_NSCameraUsageDescription = "This app needs camera access to capture photos";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Photos are saved to your photo library";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -228,14 +252,14 @@
 				DEVELOPMENT_TEAM = "";
 				CURRENT_PROJECT_VERSION = 1;
 				INFOPLIST_FILE = LightCam/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "补光相机";
-				INFOPLIST_KEY_NSCameraUsageDescription = "需要访问相机进行拍照";
-				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "需要保存照片到您的相册";
+				INFOPLIST_KEY_CFBundleDisplayName = "LightCam";
+				INFOPLIST_KEY_NSCameraUsageDescription = "This app needs camera access to capture photos";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Photos are saved to your photo library";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
