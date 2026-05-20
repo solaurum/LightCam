@@ -16,12 +16,12 @@
 		A50000000000000000000005 /* ColorPresetEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B50000000000000000000005 /* ColorPresetEditor.swift */; };
 		A60000000000000000000006 /* LocalizationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B60000000000000000000006 /* LocalizationManager.swift */; };
 		A7CFBE2A6EAE45889B5F41B5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F26391DDB3444A0388A749D8 /* Assets.xcassets */; };
-		CF5CD8592B7541C485EDA64D /* index.html in Resources */ = {isa = PBXBuildFile; fileRef = 8662946204E94EE5A0FDE72D /* index.html */; };
+
 		E36C0D359DE948BC8AD857E8 /* LightCamApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95CD8E2BDF284E97AD8DF0BD /* LightCamApp.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		8662946204E94EE5A0FDE72D /* index.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = index.html; sourceTree = "<group>"; };
+
 		95CD8E2BDF284E97AD8DF0BD /* LightCamApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightCamApp.swift; sourceTree = "<group>"; };
 		B10000000000000000000001 /* CameraManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraManager.swift; sourceTree = "<group>"; };
 		B20000000000000000000002 /* LightPreset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightPreset.swift; sourceTree = "<group>"; };
@@ -66,7 +66,7 @@
 				B40000000000000000000004 /* ShutterButtonStyle.swift */,
 				B50000000000000000000005 /* ColorPresetEditor.swift */,
 				B60000000000000000000006 /* LocalizationManager.swift */,
-				8662946204E94EE5A0FDE72D /* index.html */,
+
 				EF98BDC838D942DFA16DCCE1 /* Info.plist */,
 				F26391DDB3444A0388A749D8 /* Assets.xcassets */,
 			);
@@ -140,7 +140,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CF5CD8592B7541C485EDA64D /* index.html in Resources */,
+
 				A7CFBE2A6EAE45889B5F41B5 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
