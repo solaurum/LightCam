@@ -23,15 +23,15 @@ struct ContentView: View {
     private let viewfinderHeight: CGFloat = 280 * 4 / 3
 
     private let presets: [LightPreset] = [
-        LightPreset(id: 0, name: "Pure White",  red: 1.0,  green: 1.0,  blue: 1.0,  temp: 6500, defaultScreenBrightness: 0.95),
-        LightPreset(id: 1, name: "Warm Glow",  red: 1.0,  green: 0.55, blue: 0.20, temp: 3200, defaultScreenBrightness: 0.88),
-        LightPreset(id: 2, name: "Candlelight", red: 1.0,  green: 0.40, blue: 0.10, temp: 2000, defaultScreenBrightness: 0.75),
-        LightPreset(id: 3, name: "Cloudy",      red: 0.68, green: 0.78, blue: 0.90, temp: 7500, defaultScreenBrightness: 0.85, defaultColorBrightness: 0.3),
-        LightPreset(id: 4, name: "Warm Amber",  red: 1.0,  green: 0.82, blue: 0.45, temp: 4000, defaultScreenBrightness: 0.88),
-        LightPreset(id: 5, name: "Soft Pink",   red: 1.0,  green: 0.50, blue: 0.60, temp: 3500, defaultScreenBrightness: 0.82, defaultColorBrightness: 0.4),
-        LightPreset(id: 6, name: "Lavender", red: 0.78, green: 0.65, blue: 1.0, temp: 5000, defaultScreenBrightness: 0.85, defaultColorBrightness: 0.35,
+        LightPreset(id: 0, name: "Studio White",  red: 1.0,  green: 1.0,  blue: 1.0,  temp: 6500, defaultScreenBrightness: 0.95),
+        LightPreset(id: 1, name: "Golden Hour",   red: 1.0,  green: 0.55, blue: 0.20, temp: 3200, defaultScreenBrightness: 0.88),
+        LightPreset(id: 2, name: "Fireside",      red: 1.0,  green: 0.40, blue: 0.10, temp: 2000, defaultScreenBrightness: 0.75),
+        LightPreset(id: 3, name: "Morning Mist",  red: 0.68, green: 0.78, blue: 0.90, temp: 7500, defaultScreenBrightness: 0.85, defaultColorBrightness: 0.3),
+        LightPreset(id: 4, name: "Honey Glow",    red: 1.0,  green: 0.82, blue: 0.45, temp: 4000, defaultScreenBrightness: 0.88),
+        LightPreset(id: 5, name: "Rose Blush",    red: 1.0,  green: 0.50, blue: 0.60, temp: 3500, defaultScreenBrightness: 0.82, defaultColorBrightness: 0.4),
+        LightPreset(id: 6, name: "Twilight Haze", red: 0.78, green: 0.65, blue: 1.0, temp: 5000, defaultScreenBrightness: 0.85, defaultColorBrightness: 0.35,
                     mode: .gradientTopBottom, secondRed: 0.91, secondGreen: 0.84, secondBlue: 0.98),
-        LightPreset(id: 7, name: "Sunset Split", red: 1.0, green: 0.55, blue: 0.26, temp: 3800, defaultScreenBrightness: 0.88,
+        LightPreset(id: 7, name: "Blue Hour",     red: 1.0, green: 0.55, blue: 0.26, temp: 3800, defaultScreenBrightness: 0.88,
                     mode: .dualLeftRight, secondRed: 0.42, secondGreen: 0.30, secondBlue: 0.72),
     ]
 

@@ -63,24 +63,24 @@ class LocalizationManager: ObservableObject {
     // MARK: - Dictionaries
 
     private let enPresetNames: [Int: String] = [
-        0: "Pure White", 1: "Warm Glow", 2: "Candlelight",
-        3: "Cloudy", 4: "Warm Amber", 5: "Soft Pink", 6: "Lavender",
-        7: "Sunset Split"
+        0: "Studio White", 1: "Golden Hour", 2: "Fireside",
+        3: "Morning Mist", 4: "Honey Glow", 5: "Rose Blush", 6: "Twilight Haze",
+        7: "Blue Hour"
     ]
     private let zhPresetNames: [Int: String] = [
-        0: "纯白", 1: "暖调", 2: "烛光暖调",
-        3: "阴天自然", 4: "暖黄灯光", 5: "粉红柔光", 6: "薰衣草",
-        7: "日落双色"
+        0: "影棚白光", 1: "落日余晖", 2: "炉火暖光",
+        3: "晨雾柔光", 4: "蜂蜜琥珀", 5: "玫瑰绯红", 6: "暮光紫霞",
+        7: "蓝调时刻"
     ]
     private let koPresetNames: [Int: String] = [
-        0: "퓨어 화이트", 1: "웜 글로우", 2: "캔들라이트",
-        3: "흐림", 4: "웜 엠버", 5: "소프트 핑크", 6: "라벤더",
-        7: "선셋 스플릿"
+        0: "스튜디오 화이트", 1: "골든 아워", 2: "파이어사이드",
+        3: "아침 안개", 4: "허니 글로우", 5: "로즈 블러시", 6: "트와일라잇 헤이즈",
+        7: "블루 아워"
     ]
     private let jaPresetNames: [Int: String] = [
-        0: "ピュアホワイト", 1: "ウォームグロー", 2: "キャンドルライト",
-        3: "曇り", 4: "ウォームアンバー", 5: "ソフトピンク", 6: "ラベンダー",
-        7: "サンセットスプリット"
+        0: "スタジオホワイト", 1: "ゴールデンアワー", 2: "ファイヤーサイド",
+        3: "朝霧", 4: "ハニーグロー", 5: "ローズブラッシュ", 6: "トワイライトヘイズ",
+        7: "ブルーアワー"
     ]
 
     private let strings: [String: [AppLanguage: String]] = [
