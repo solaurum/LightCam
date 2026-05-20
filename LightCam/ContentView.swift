@@ -85,17 +85,6 @@ struct ContentView: View {
                 }
                 .padding(.bottom, geometry.safeAreaInsets.bottom + 8)
 
-                // Language button - top right
-                VStack {
-                    HStack {
-                        Spacer()
-                        languageButton
-                    }
-                    Spacer()
-                }
-                .padding(.top, geometry.safeAreaInsets.top + 8)
-                .padding(.trailing, 16)
-
                 // Photo preview
                 if showingPreview, let img = capturedImage {
                     photoPreview(img)
@@ -242,6 +231,13 @@ struct ContentView: View {
 
     private var bottomControls: some View {
         VStack(spacing: 14) {
+            // Language button
+            HStack {
+                Spacer()
+                languageButton
+            }
+            .padding(.trailing, 4)
+
             // Screen brightness slider
             HStack(spacing: 12) {
                 ZStack {

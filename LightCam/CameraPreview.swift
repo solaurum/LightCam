@@ -37,18 +37,33 @@ private struct CameraPreview: UIViewRepresentable {
     let session: AVCaptureSession
     let isMirrored: Bool
 
-    func makeUIView(context: Context) -> UIView {
-        let view = UIView()
+    func makeUIView(context: Context) -> PreviewView {
+        let view = PreviewView()
         view.backgroundColor = UIColor(white: 0.08, alpha: 1)
-        let layer = AVCaptureVideoPreviewLayer(session: session)
-        layer.videoGravity = .resizeAspectFill
-        view.layer.addSublayer(layer)
+        view.previewLayer.session = session
+        view.previewLayer.videoGravity = .resizeAspectFill
         return view
     }
 
-    func updateUIView(_ uiView: UIView, context: Context) {
-        guard let layer = uiView.layer.sublayers?.first as? AVCaptureVideoPreviewLayer else { return }
-        layer.frame = uiView.bounds
-        layer.setAffineTransform(isMirrored ? CGAffineTransform(scaleX: -1, y: 1) : .identity)
+    func updateUIView(_ uiView: PreviewView, context: Context) {
+        uiView.previewLayer.setAffineTransform(isMirrored ? CGAffineTransform(scaleX: -1, y: 1) : .identity)
+    }
+}
+
+private class PreviewView: UIView {
+    let previewLayer = AVCaptureVideoPreviewLayer()
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        layer.addSublayer(previewLayer)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        previewLayer.frame = bounds
     }
 }
