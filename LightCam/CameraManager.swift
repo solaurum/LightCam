@@ -73,7 +73,9 @@ class CameraManager: NSObject, ObservableObject {
         completion(.success(placeholder))
         #else
         photoCompletion = completion
-        photoOutput.capturePhoto(with: AVCapturePhotoSettings(), delegate: self)
+        let settings = AVCapturePhotoSettings()
+        settings.flashMode = .off
+        photoOutput.capturePhoto(with: settings, delegate: self)
         #endif
     }
 

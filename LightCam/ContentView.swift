@@ -13,7 +13,6 @@ struct ContentView: View {
     @State private var showingPreview = false
     @State private var showingPresets = false
     @State private var showingPermissionAlert = false
-    @State private var flashWhite = false
     @State private var customPresets: [LightPreset] = []
     @State private var showingColorEditor = false
     @State private var editingPreset: LightPreset?
@@ -71,11 +70,6 @@ struct ContentView: View {
                 // Color brightness overlay
                 currentPreset.color
                     .opacity(currentPreset.defaultColorBrightness * 0.35)
-
-                // Flash
-                if flashWhite {
-                    Color.white.ignoresSafeArea().transition(.opacity)
-                }
 
                 VStack(spacing: 0) {
                     Spacer()
@@ -630,11 +624,6 @@ struct ContentView: View {
     private func triggerCapture() {
         guard cam.isSessionReady else { return }
         UIImpactFeedbackGenerator(style: .heavy).impactOccurred()
-
-        withAnimation(.easeOut(duration: 0.12)) { flashWhite = true }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.18) {
-            withAnimation(.easeIn(duration: 0.15)) { flashWhite = false }
-        }
 
         cam.capture { result in
             switch result {
