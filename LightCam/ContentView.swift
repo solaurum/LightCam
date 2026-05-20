@@ -4,7 +4,7 @@ import SwiftUI
 
 struct ContentView: View {
     @EnvironmentObject var loc: LocalizationManager
-    @StateObject private var cam = CameraManager()
+    @ObservedObject var cam: CameraManager
 
     @State private var currentPresetId = 1
     @State private var isMirrored = true
@@ -110,12 +110,11 @@ struct ContentView: View {
         .background(Color.black)
         .ignoresSafeArea()
         .onAppear {
-            cam.start()
             customPresets = UserDefaults.standard.loadCustomPresets()
             screenBrightness = currentPreset.defaultScreenBrightness
             UIScreen.main.brightness = screenBrightness
         }
-        .onDisappear { cam.stop() }
+        .onDisappear {}
         .onChange(of: currentPresetId) { _ in
             screenBrightness = currentPreset.defaultScreenBrightness
             UIScreen.main.brightness = screenBrightness
