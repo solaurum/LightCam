@@ -7,32 +7,44 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		E36C0D359DE948BC8AD857E8 /* LightCamApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95CD8E2BDF284E97AD8DF0BD; };
-		5FFD9A7BB7E1488983B368B3 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D494C275E2994F22A899CF8A; };
-		A10000000000000000000001 /* CameraManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000001; };
-		A20000000000000000000002 /* LightPreset.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000002; };
-		A30000000000000000000003 /* CameraPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = B30000000000000000000003; };
-		A40000000000000000000004 /* ShutterButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = B40000000000000000000004; };
-		A50000000000000000000005 /* ColorPresetEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B50000000000000000000005; };
-		A60000000000000000000006 /* LocalizationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B60000000000000000000006; };
-		CF5CD8592B7541C485EDA64D /* index.html in Resources */ = {isa = PBXBuildFile; fileRef = 8662946204E94EE5A0FDE72D; };
-		A7CFBE2A6EAE45889B5F41B5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F26391DDB3444A0388A749D8; };
+		08C21FF32FBDA17500A00891 /* SimulatorCameraClient in Frameworks */ = {isa = PBXBuildFile; productRef = E50000000000000000000002 /* SimulatorCameraClient */; };
+		5FFD9A7BB7E1488983B368B3 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D494C275E2994F22A899CF8A /* ContentView.swift */; };
+		A10000000000000000000001 /* CameraManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000001 /* CameraManager.swift */; };
+		A20000000000000000000002 /* LightPreset.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000002 /* LightPreset.swift */; };
+		A30000000000000000000003 /* CameraPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = B30000000000000000000003 /* CameraPreview.swift */; };
+		A40000000000000000000004 /* ShutterButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = B40000000000000000000004 /* ShutterButtonStyle.swift */; };
+		A50000000000000000000005 /* ColorPresetEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B50000000000000000000005 /* ColorPresetEditor.swift */; };
+		A60000000000000000000006 /* LocalizationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B60000000000000000000006 /* LocalizationManager.swift */; };
+		A7CFBE2A6EAE45889B5F41B5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F26391DDB3444A0388A749D8 /* Assets.xcassets */; };
+		CF5CD8592B7541C485EDA64D /* index.html in Resources */ = {isa = PBXBuildFile; fileRef = 8662946204E94EE5A0FDE72D /* index.html */; };
+		E36C0D359DE948BC8AD857E8 /* LightCamApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95CD8E2BDF284E97AD8DF0BD /* LightCamApp.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		95CD8E2BDF284E97AD8DF0BD /* LightCamApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightCamApp.swift; sourceTree = "<group>"; };
-		D494C275E2994F22A899CF8A /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		8662946204E94EE5A0FDE72D /* index.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = index.html; sourceTree = "<group>"; };
-		EF98BDC838D942DFA16DCCE1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		F26391DDB3444A0388A749D8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		B826C4FDDF9D4161BAA957C3 /* LightCam.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LightCam.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		95CD8E2BDF284E97AD8DF0BD /* LightCamApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightCamApp.swift; sourceTree = "<group>"; };
 		B10000000000000000000001 /* CameraManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraManager.swift; sourceTree = "<group>"; };
 		B20000000000000000000002 /* LightPreset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightPreset.swift; sourceTree = "<group>"; };
 		B30000000000000000000003 /* CameraPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraPreview.swift; sourceTree = "<group>"; };
 		B40000000000000000000004 /* ShutterButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShutterButtonStyle.swift; sourceTree = "<group>"; };
 		B50000000000000000000005 /* ColorPresetEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorPresetEditor.swift; sourceTree = "<group>"; };
 		B60000000000000000000006 /* LocalizationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalizationManager.swift; sourceTree = "<group>"; };
+		B826C4FDDF9D4161BAA957C3 /* LightCam.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LightCam.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D494C275E2994F22A899CF8A /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		EF98BDC838D942DFA16DCCE1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F26391DDB3444A0388A749D8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		84ADFCBFF86D4438B4B08C62 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				08C21FF32FBDA17500A00891 /* SimulatorCameraClient in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		3017900FE3644C03B9135E1B = {
@@ -74,7 +86,7 @@
 /* Begin PBXNativeTarget section */
 		26CF2FD3B10D473DA735E291 /* LightCam */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 8BCD84B6DF564E8CAE4A1615;
+			buildConfigurationList = 8BCD84B6DF564E8CAE4A1615 /* Build configuration list for PBXNativeTarget "LightCam" */;
 			buildPhases = (
 				0788FF65809F441499E52FE1 /* Sources */,
 				84ADFCBFF86D4438B4B08C62 /* Frameworks */,
@@ -89,7 +101,7 @@
 				E50000000000000000000002 /* SimulatorCameraClient */,
 			);
 			productName = LightCam;
-			productReference = B826C4FDDF9D4161BAA957C3;
+			productReference = B826C4FDDF9D4161BAA957C3 /* LightCam.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -102,7 +114,7 @@
 				LastSwiftUpdateCheck = 2650;
 				LastUpgradeCheck = 2650;
 			};
-			buildConfigurationList = D7E6CDB33A4A483A8AA91DE2;
+			buildConfigurationList = D7E6CDB33A4A483A8AA91DE2 /* Build configuration list for PBXProject "LightCam" */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -114,7 +126,7 @@
 			packageReferences = (
 				E50000000000000000000001 /* XCRemoteSwiftPackageReference "SimulatorCamera" */,
 			);
-			productRefGroup = EBD7ED059C824D00A11F2E6B;
+			productRefGroup = EBD7ED059C824D00A11F2E6B /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -153,17 +165,37 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
-/* Begin PBXFrameworksBuildPhase section */
-		84ADFCBFF86D4438B4B08C62 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXFrameworksBuildPhase section */
-
 /* Begin XCBuildConfiguration section */
+		2470EB82FAE942DA8252EE3E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = JP628F7U55;
+				ENABLE_PREVIEWS = NO;
+				INFOPLIST_FILE = LightCam/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = LightCam;
+				INFOPLIST_KEY_NSCameraUsageDescription = "This app needs camera access to capture photos";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Photos are saved to your photo library";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.lightcam.app;
+				PRODUCT_NAME = LightCam;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
 		28CAEAFBA1334F8DB5392A5A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -188,6 +220,36 @@
 			};
 			name = Debug;
 		};
+		DA144506E50E4DE68701B73A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = JP628F7U55;
+				ENABLE_PREVIEWS = NO;
+				INFOPLIST_FILE = LightCam/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = LightCam;
+				INFOPLIST_KEY_NSCameraUsageDescription = "This app needs camera access to capture photos";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Photos are saved to your photo library";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.lightcam.app;
+				PRODUCT_NAME = LightCam;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
 		FD88B6CE176943E5B0F341EA /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -211,85 +273,23 @@
 			};
 			name = Release;
 		};
-		2470EB82FAE942DA8252EE3E /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "-";
-				CODE_SIGN_STYLE = Manual;
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				DEVELOPMENT_TEAM = "";
-				CURRENT_PROJECT_VERSION = 1;
-				INFOPLIST_FILE = LightCam/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "LightCam";
-				INFOPLIST_KEY_NSCameraUsageDescription = "This app needs camera access to capture photos";
-				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Photos are saved to your photo library";
-				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
-				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.lightcam.app;
-				PRODUCT_NAME = LightCam;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
-			};
-			name = Debug;
-		};
-		DA144506E50E4DE68701B73A /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "-";
-				CODE_SIGN_STYLE = Manual;
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				DEVELOPMENT_TEAM = "";
-				CURRENT_PROJECT_VERSION = 1;
-				INFOPLIST_FILE = LightCam/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "LightCam";
-				INFOPLIST_KEY_NSCameraUsageDescription = "This app needs camera access to capture photos";
-				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Photos are saved to your photo library";
-				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
-				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.lightcam.app;
-				PRODUCT_NAME = LightCam;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		D7E6CDB33A4A483A8AA91DE2 /* Build configuration list for PBXProject "LightCam" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				28CAEAFBA1334F8DB5392A5A /* Debug */,
-				FD88B6CE176943E5B0F341EA /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		8BCD84B6DF564E8CAE4A1615 /* Build configuration list for PBXNativeTarget "LightCam" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				2470EB82FAE942DA8252EE3E /* Debug */,
 				DA144506E50E4DE68701B73A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D7E6CDB33A4A483A8AA91DE2 /* Build configuration list for PBXProject "LightCam" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				28CAEAFBA1334F8DB5392A5A /* Debug */,
+				FD88B6CE176943E5B0F341EA /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -310,7 +310,7 @@
 /* Begin XCSwiftPackageProductDependency section */
 		E50000000000000000000002 /* SimulatorCameraClient */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = E50000000000000000000001;
+			package = E50000000000000000000001 /* XCRemoteSwiftPackageReference "SimulatorCamera" */;
 			productName = SimulatorCameraClient;
 		};
 /* End XCSwiftPackageProductDependency section */
