@@ -5,7 +5,7 @@
     <key>CFBundleDevelopmentRegion</key>
     <string>en_US</string>
     <key>CFBundleDisplayName</key>
-    <string>LightCam</string>
+    <string>自拍补光相机</string>
     <key>CFBundleExecutable</key>
     <string>LightCam</string>
     <key>CFBundleIdentifier</key>
