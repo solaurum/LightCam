@@ -10,14 +10,14 @@ final class PresetManager: ObservableObject {
     private let storage = StorageManager.shared
 
     let builtInPresets: [LightPreset] = [
-        LightPreset(id: "apple",     name: "苹果店白",   color: .solid(.init(hex: "#FFFFFF")), brightness: 100, colorBrightness: 100, isCustom: false),
-        LightPreset(id: "sunset",    name: "日落咖啡馆", color: .gradient(primary: .init(hex: "#FFD9A8"), secondary: .init(hex: "#F5C4B3"), angle: 135), brightness: 85, colorBrightness: 100, isCustom: false),
-        LightPreset(id: "cream",     name: "韩系奶油",   color: .solid(.init(hex: "#FFF0F5")), brightness: 75, colorBrightness: 100, isCustom: false),
-        LightPreset(id: "cinema",    name: "电影感",     color: .split(primary: .init(hex: "#85B7EB"), secondary: .init(hex: "#F5C4B3")), brightness: 90, colorBrightness: 100, isCustom: false),
-        LightPreset(id: "mint",      name: "清晨薄荷",   color: .solid(.init(hex: "#E8F5E9")), brightness: 70, colorBrightness: 100, isCustom: false),
-        LightPreset(id: "lavender",  name: "薰衣草紫",   color: .solid(.init(hex: "#E8D5F2")), brightness: 80, colorBrightness: 100, isCustom: false),
-        LightPreset(id: "blackscreen", name: "黑屏自拍", color: .solid(.init(hex: "#0A0A0A")), brightness: 15, colorBrightness: 5, isCustom: false),
-        LightPreset(id: "custom",    name: "自定义",     color: .solid(.init(hex: "#FF69B4")), brightness: 80, colorBrightness: 100, isCustom: true),
+        LightPreset(id: "sakura",    name: "樱花微醺粉", color: .solid(.init(hex: "#F5A0B5")), brightness: 82, colorBrightness: 100, isCustom: false),
+        LightPreset(id: "golden",    name: "黄金时刻奶黄", color: .gradient(primary: .init(hex: "#FFB380"), secondary: .init(hex: "#FFD1A0"), angle: 135), brightness: 88, colorBrightness: 100, isCustom: false),
+        LightPreset(id: "aurora",    name: "极光紫薰衣草", color: .solid(.init(hex: "#7B4FBF")), brightness: 78, colorBrightness: 100, isCustom: false),
+        LightPreset(id: "coral",     name: "珊瑚礁蜜桃", color: .solid(.init(hex: "#FF6B6B")), brightness: 85, colorBrightness: 100, isCustom: false),
+        LightPreset(id: "glacier",   name: "冰川蓝冰白", color: .solid(.init(hex: "#A8D8EA")), brightness: 80, colorBrightness: 100, isCustom: false),
+        LightPreset(id: "matcha",    name: "抹茶雾浅绿", color: .solid(.init(hex: "#B5C9A0")), brightness: 75, colorBrightness: 100, isCustom: false),
+        LightPreset(id: "smoke",     name: "烟灰银珍珠白", color: .solid(.init(hex: "#D4CFC7")), brightness: 85, colorBrightness: 100, isCustom: false),
+        LightPreset(id: "deepsea",   name: "深海夜光深蓝", color: .solid(.init(hex: "#3B7690")), brightness: 70, colorBrightness: 100, isCustom: false),
     ]
 
     init() {
