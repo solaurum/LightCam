@@ -223,13 +223,17 @@ struct ColorPickerView: View {
                 Button(action: {
                     showRenameSheet = true
                 }) {
-                    Label(localization.localized("save_as_preset"), systemImage: "square.and.arrow.down")
-                        .font(.system(size: 13, weight: .semibold))
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 12)
-                        .background(Color.white.opacity(0.15))
-                        .foregroundColor(.white)
-                        .cornerRadius(12)
+                    HStack(spacing: 6) {
+                        Image(systemName: "square.and.arrow.down")
+                            .font(.system(size: 13, weight: .semibold))
+                        Text(localization.localized("save_as_preset"))
+                            .font(.system(size: 13, weight: .semibold))
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 12)
+                    .background(Color.white.opacity(0.15))
+                    .foregroundColor(.white)
+                    .cornerRadius(12)
                 }
 
                 Button(action: {

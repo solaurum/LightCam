@@ -16,12 +16,10 @@
 		A50000000000000000000005 /* ColorPresetEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B50000000000000000000005 /* ColorPresetEditor.swift */; };
 		A60000000000000000000006 /* LocalizationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B60000000000000000000006 /* LocalizationManager.swift */; };
 		A7CFBE2A6EAE45889B5F41B5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F26391DDB3444A0388A749D8 /* Assets.xcassets */; };
-
 		E36C0D359DE948BC8AD857E8 /* LightCamApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95CD8E2BDF284E97AD8DF0BD /* LightCamApp.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-
 		95CD8E2BDF284E97AD8DF0BD /* LightCamApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightCamApp.swift; sourceTree = "<group>"; };
 		B10000000000000000000001 /* CameraManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraManager.swift; sourceTree = "<group>"; };
 		B20000000000000000000002 /* LightPreset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightPreset.swift; sourceTree = "<group>"; };
@@ -66,7 +64,6 @@
 				B40000000000000000000004 /* ShutterButtonStyle.swift */,
 				B50000000000000000000005 /* ColorPresetEditor.swift */,
 				B60000000000000000000006 /* LocalizationManager.swift */,
-
 				EF98BDC838D942DFA16DCCE1 /* Info.plist */,
 				F26391DDB3444A0388A749D8 /* Assets.xcassets */,
 			);
@@ -140,7 +137,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-
 				A7CFBE2A6EAE45889B5F41B5 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -188,7 +184,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.lightcam.app;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jinyanghu.LightCam;
 				PRODUCT_NAME = LightCam;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -242,7 +238,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.lightcam.app;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jinyanghu.LightCam;
 				PRODUCT_NAME = LightCam;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
