@@ -102,7 +102,7 @@ struct ContentView: View {
             screenBrightness = currentPreset.defaultScreenBrightness
             UIScreen.main.brightness = screenBrightness
         }
-        .sheet(isPresented: $showingPresets) { presetPicker }
+        .fullScreenCover(isPresented: $showingPresets) { presetPicker }
         .sheet(isPresented: $showingColorEditor) {
             ColorPresetEditor(customPresets: $customPresets, isPresented: $showingColorEditor,
                               editingPreset: editingPreset)
