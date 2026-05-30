@@ -12,7 +12,9 @@
 		A10000000000000000000001 /* CameraManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000001 /* CameraManager.swift */; };
 		A20000000000000000000002 /* LightPreset.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000002 /* LightPreset.swift */; };
 		A30000000000000000000003 /* CameraPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = B30000000000000000000003 /* CameraPreview.swift */; };
-		A40000000000000000000004 /* ShutterButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = B40000000000000000000004 /* ShutterButtonStyle.swift */; };
+		A70000000000000000000010 /* AnimeTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = B70000000000000000000010 /* AnimeTheme.swift */; };
+		A70000000000000000000011 /* UIComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = B70000000000000000000011 /* UIComponents.swift */; };
+		A70000000000000000000012 /* PresetPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B70000000000000000000012 /* PresetPickerView.swift */; };
 		A50000000000000000000005 /* ColorPresetEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B50000000000000000000005 /* ColorPresetEditor.swift */; };
 		A60000000000000000000006 /* LocalizationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B60000000000000000000006 /* LocalizationManager.swift */; };
 		A7CFBE2A6EAE45889B5F41B5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F26391DDB3444A0388A749D8 /* Assets.xcassets */; };
@@ -24,7 +26,9 @@
 		B10000000000000000000001 /* CameraManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraManager.swift; sourceTree = "<group>"; };
 		B20000000000000000000002 /* LightPreset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightPreset.swift; sourceTree = "<group>"; };
 		B30000000000000000000003 /* CameraPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraPreview.swift; sourceTree = "<group>"; };
-		B40000000000000000000004 /* ShutterButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShutterButtonStyle.swift; sourceTree = "<group>"; };
+		B70000000000000000000010 /* AnimeTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimeTheme.swift; sourceTree = "<group>"; };
+		B70000000000000000000011 /* UIComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIComponents.swift; sourceTree = "<group>"; };
+		B70000000000000000000012 /* PresetPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresetPickerView.swift; sourceTree = "<group>"; };
 		B50000000000000000000005 /* ColorPresetEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorPresetEditor.swift; sourceTree = "<group>"; };
 		B60000000000000000000006 /* LocalizationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalizationManager.swift; sourceTree = "<group>"; };
 		B826C4FDDF9D4161BAA957C3 /* LightCam.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LightCam.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -61,7 +65,9 @@
 				B10000000000000000000001 /* CameraManager.swift */,
 				B20000000000000000000002 /* LightPreset.swift */,
 				B30000000000000000000003 /* CameraPreview.swift */,
-				B40000000000000000000004 /* ShutterButtonStyle.swift */,
+				B70000000000000000000010 /* AnimeTheme.swift */,
+				B70000000000000000000011 /* UIComponents.swift */,
+				B70000000000000000000012 /* PresetPickerView.swift */,
 				B50000000000000000000005 /* ColorPresetEditor.swift */,
 				B60000000000000000000006 /* LocalizationManager.swift */,
 				EF98BDC838D942DFA16DCCE1 /* Info.plist */,
@@ -153,7 +159,9 @@
 				A10000000000000000000001 /* CameraManager.swift in Sources */,
 				A20000000000000000000002 /* LightPreset.swift in Sources */,
 				A30000000000000000000003 /* CameraPreview.swift in Sources */,
-				A40000000000000000000004 /* ShutterButtonStyle.swift in Sources */,
+				A70000000000000000000010 /* AnimeTheme.swift in Sources */,
+				A70000000000000000000011 /* UIComponents.swift in Sources */,
+				A70000000000000000000012 /* PresetPickerView.swift in Sources */,
 				A50000000000000000000005 /* ColorPresetEditor.swift in Sources */,
 				A60000000000000000000006 /* LocalizationManager.swift in Sources */,
 			);

@@ -8,3 +8,4 @@ DerivedData/
 Pods/
 .build/
 *.xcworkspace/xcuserdata/
+build/

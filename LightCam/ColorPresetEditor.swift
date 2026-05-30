@@ -9,6 +9,10 @@ struct ColorWheel: View {
     @State private var wheelImage: UIImage?
     @State private var pickerPoint: CGPoint = .zero
 
+    /// Static cache — the HSL wheel depends only on its rendered pixel size,
+    /// not on the selected colour, so we render it once and reuse forever.
+    private static var imageCache: [Int: UIImage] = [:]
+
     var body: some View {
         ZStack {
             if let img = wheelImage {
@@ -35,14 +39,14 @@ struct ColorWheel: View {
                 }
         )
         .onAppear {
-            wheelImage = renderWheel(size: size * 3) // 3x for retina
+            renderWheelAsync(size: size)
             updatePickerFromColor()
         }
         .onChange(of: color) { _ in
             updatePickerFromColor()
         }
         .onChange(of: size) { newSize in
-            wheelImage = renderWheel(size: newSize * 3)
+            renderWheelAsync(size: newSize)
         }
     }
 
@@ -77,12 +81,14 @@ struct ColorWheel: View {
         pickerPoint = CGPoint(x: cx + cos(angle) * rad, y: cy + sin(angle) * rad)
     }
 
-    private func renderWheel(size: CGFloat) -> UIImage {
-        let step: CGFloat = 3
-        let renderer = UIGraphicsImageRenderer(size: CGSize(width: size, height: size))
+    /// Render at 4× logical size with step 2 — high-density "4K" quality.
+    /// Static cache means this cost is paid exactly once per logical size.
+    private func renderWheel(renderSize: CGFloat) -> UIImage {
+        let step: CGFloat = 2
+        let renderer = UIGraphicsImageRenderer(size: CGSize(width: renderSize, height: renderSize))
         return renderer.image { ctx in
-            let r = size / 2, cx = size / 2, cy = size / 2
-            let intSize = Int(size)
+            let r = renderSize / 2, cx = renderSize / 2, cy = renderSize / 2
+            let intSize = Int(renderSize)
             for y in stride(from: 0, to: intSize, by: Int(step)) {
                 let dy = CGFloat(y) - cy
                 for x in stride(from: 0, to: intSize, by: Int(step)) {
@@ -92,8 +98,8 @@ struct ColorWheel: View {
                     let angle = atan2(dy, dx)
                     let hue = ((angle * 180 / .pi + 90) + 360).truncatingRemainder(dividingBy: 360)
                     let sat = dist / r
-                    let color = hslToRgb(h: hue, s: sat, l: 0.55)
-                    let fill = UIColor(red: CGFloat(color.r) / 255, green: CGFloat(color.g) / 255, blue: CGFloat(color.b) / 255, alpha: 1)
+                    let rgb = hslToRgb(h: hue, s: sat, l: 0.55)
+                    let fill = UIColor(red: CGFloat(rgb.r) / 255, green: CGFloat(rgb.g) / 255, blue: CGFloat(rgb.b) / 255, alpha: 1)
                     fill.setFill()
                     ctx.fill(CGRect(x: CGFloat(x), y: CGFloat(y), width: step, height: step))
                 }
@@ -116,54 +122,55 @@ struct ColorWheel: View {
         }
         return (UInt8((r1 + m) * 255), UInt8((g1 + m) * 255), UInt8((b1 + m) * 255))
     }
+
+    /// Renders the colour wheel on a background thread, with a static cache so the
+    /// expensive pixel-by-pixel work only runs once per logical size.
+    private func renderWheelAsync(size: CGFloat) {
+        let renderSize = Int(size * 4)  // 4× → "4K" crisp on any retina display
+        let cacheKey = renderSize
+
+        // Check cache first — instant return on every subsequent open
+        if let cached = Self.imageCache[cacheKey] {
+            wheelImage = cached
+            return
+        }
+
+        DispatchQueue.global(qos: .userInitiated).async {
+            let img = renderWheel(renderSize: CGFloat(renderSize))
+            Self.imageCache[cacheKey] = img
+            DispatchQueue.main.async {
+                wheelImage = img
+            }
+        }
+    }
 }
 
 // MARK: - Color Preset Editor
 
 struct ColorPresetEditor: View {
+    @EnvironmentObject var presetManager: PresetManager
     @EnvironmentObject var loc: LocalizationManager
-    @Binding var customPresets: [LightPreset]
-    @Binding var isPresented: Bool
-    let editingPreset: LightPreset?
 
     @State private var selectedMode: PresetMode = .solid
     @State private var firstColor: Color = .white
     @State private var secondColor: Color = .gray
     @State private var activeColor: Int = 0
     @State private var splitDirection: SplitDirection = .horizontal
+    @State private var brightness: Double = 0.85
 
-    init(customPresets: Binding<[LightPreset]>, isPresented: Binding<Bool>,
-         editingPreset: LightPreset? = nil) {
-        self._customPresets = customPresets
-        self._isPresented = isPresented
-        self.editingPreset = editingPreset
-        if let p = editingPreset {
-            self._selectedMode = State(initialValue: p.mode)
-            self._firstColor = State(initialValue: p.color)
-            self._secondColor = State(initialValue: p.secondColor)
-            self._splitDirection = State(initialValue: p.splitDirection)
-        }
-    }
-
+    private var editingPreset: LightPreset? { presetManager.editingPreset }
     private var isEditing: Bool { editingPreset != nil }
     private var needsSecondColor: Bool { selectedMode != .solid }
 
+    // MARK: - Body
+
     var body: some View {
         GeometryReader { geo in
-            let wheelSize = min(geo.size.width * 0.66, geo.size.height * 0.38)
+            let wheelSize = min(geo.size.width * 0.66, geo.size.height * 0.24)
 
             ZStack {
-                // Background — matching presets picker
-                LinearGradient(
-                    colors: [Color(red: 0.06, green: 0.04, blue: 0.12),
-                             Color(red: 0.03, green: 0.02, blue: 0.08)],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-
-                // Subtle sparkles
-                AnimeSparkleView(count: 5, color: Color(red: 0.706, green: 0.573, blue: 0.878))
-                    .allowsHitTesting(false)
+                // Background — starry sky shared with preset picker
+                AnimeStarryBackground()
 
                 VStack(spacing: 0) {
                     // Header
@@ -173,75 +180,96 @@ struct ColorPresetEditor: View {
                             .foregroundColor(.white)
                         Spacer()
                         Button {
-                            withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
-                                isPresented = false
-                            }
+                            presetManager.closeEditor()
                         } label: {
                             Image(systemName: "xmark")
                                 .font(.system(size: 13, weight: .bold))
                                 .foregroundColor(.white.opacity(0.6))
-                                .frame(width: 28, height: 28)
-                                .background(Color.white.opacity(0.1))
-                                .clipShape(Circle())
+                                .frame(width: 44, height: 44)
+                                .background(Circle().fill(Color.white.opacity(0.1)))
                         }
+                        .contentShape(Circle())
                     }
                     .padding(.horizontal, 20)
-                    .padding(.top, 16)
-                    .padding(.bottom, 10)
+                    .padding(.top, 10)
+                    .padding(.bottom, 4)
 
-                    ScrollView {
-                        VStack(spacing: 14) {
-                            // Color wheel — centered
-                            ColorWheel(color: activeColor == 0 ? $firstColor : $secondColor, size: wheelSize)
+                    VStack(spacing: 8) {
+                        // Color wheel
+                        ColorWheel(color: activeColor == 0 ? $firstColor : $secondColor, size: wheelSize)
 
-                            // Dual color selector
-                            if needsSecondColor {
-                                HStack(spacing: 14) {
-                                    colorChip(label: loc.string("primary"), color: firstColor, isActive: activeColor == 0)
-                                        .onTapGesture { activeColor = 0 }
-                                    colorChip(label: loc.string("secondary"), color: secondColor, isActive: activeColor == 1)
-                                        .onTapGesture { activeColor = 1 }
-                                }
+                        // Brightness slider
+                        VStack(spacing: 4) {
+                            HStack {
+                                Image(systemName: "sun.min")
+                                    .font(.system(size: 10))
+                                    .foregroundColor(.white.opacity(0.35))
+                                Slider(value: $brightness, in: 0.0...1.0)
+                                    .tint(currentActiveColor)
+                                    .onChange(of: brightness) { newValue in
+                                        if activeColor == 0 {
+                                            applyBrightness(newValue, to: &firstColor)
+                                        } else {
+                                            applyBrightness(newValue, to: &secondColor)
+                                        }
+                                    }
+                                Image(systemName: "sun.max")
+                                    .font(.system(size: 12))
+                                    .foregroundColor(.white.opacity(0.5))
+                            }
+                            Text(loc.string("brightness"))
+                                .font(.system(size: 9))
+                                .foregroundColor(.white.opacity(0.3))
+                        }
+                        .padding(.horizontal, 4)
+
+                        // Dual color selector
+                        if needsSecondColor {
+                            HStack(spacing: 14) {
+                                colorChip(label: loc.string("primary"), color: firstColor, isActive: activeColor == 0)
+                                    .onTapGesture { activeColor = 0 }
+                                colorChip(label: loc.string("secondary"), color: secondColor, isActive: activeColor == 1)
+                                    .onTapGesture { activeColor = 1 }
+                            }
+                        }
+
+                        // Mode selector + direction
+                        VStack(spacing: 6) {
+                            HStack(spacing: 6) {
+                                modeTab(.solid, "square.fill", loc.string("mode_solid"))
+                                modeTab(.gradient, "square.split.2x1.fill", loc.string("mode_gradient"))
+                                modeTab(.dual, "rectangle.split.2x1.fill", loc.string("mode_dual"))
                             }
 
-                            // Mode selector + direction — card style
-                            VStack(spacing: 10) {
-                                HStack(spacing: 6) {
-                                    modeTab(.solid, "square.fill", loc.string("mode_solid"))
-                                    modeTab(.gradientTopBottom, "square.split.2x1.fill", loc.string("mode_gradient"))
-                                    modeTab(.dualLeftRight, "rectangle.split.2x1.fill", loc.string("mode_dual"))
-                                }
-
-                                if selectedMode != .solid {
-                                    HStack(spacing: 8) {
-                                        ForEach(SplitDirection.allCases, id: \.self) { dir in
-                                            splitDirectionChip(dir)
-                                        }
+                            if selectedMode != .solid {
+                                HStack(spacing: 8) {
+                                    ForEach(SplitDirection.allCases, id: \.self) { dir in
+                                        splitDirectionChip(dir)
                                     }
                                 }
                             }
-                            .padding(12)
-                            .background(Color.white.opacity(0.03))
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 14)
-                                    .stroke(Color.white.opacity(0.06), lineWidth: 0.5)
-                            )
-                            .clipShape(RoundedRectangle(cornerRadius: 14))
                         }
-                        .padding(.horizontal, 20)
-                        .padding(.bottom, 12)
+                        .padding(8)
+                        .background(Color.white.opacity(0.03))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 14)
+                                .stroke(Color.white.opacity(0.06), lineWidth: 0.5)
+                        )
+                        .clipShape(RoundedRectangle(cornerRadius: 14))
                     }
+                    .padding(.horizontal, 20)
+                    .padding(.bottom, 6)
 
-                    // Save button — centered, narrow
+                    // Save button
                     Button {
-                        UIImpactFeedbackGenerator(style: .heavy).impactOccurred()
+                        HapticHelper.heavy.fire()
                         performSave()
                     } label: {
                         Text(isEditing ? loc.string("update") : loc.string("save_preset"))
                             .font(.system(size: 15, weight: .semibold))
                             .foregroundColor(.white)
                             .padding(.horizontal, 42)
-                            .padding(.vertical, 12)
+                            .padding(.vertical, 10)
                             .background(firstColor.opacity(0.45))
                             .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.white.opacity(0.12), lineWidth: 1))
                             .clipShape(RoundedRectangle(cornerRadius: 12))
@@ -252,6 +280,24 @@ struct ColorPresetEditor: View {
             }
         }
         .preferredColorScheme(.dark)
+        .onAppear {
+            if let p = editingPreset {
+                selectedMode = p.mode
+                firstColor = p.color
+                secondColor = p.secondColor
+                splitDirection = p.splitDirection
+            }
+            syncBrightnessFromColor(firstColor)
+        }
+        .onChange(of: firstColor) { newColor in
+            syncBrightnessFromColor(newColor)
+        }
+        .onChange(of: secondColor) { newColor in
+            syncBrightnessFromColor(newColor)
+        }
+        .onChange(of: activeColor) { _ in
+            syncBrightnessFromColor(currentActiveColor)
+        }
     }
 
     // MARK: - Color Chip
@@ -273,11 +319,37 @@ struct ColorPresetEditor: View {
         )
     }
 
+    // MARK: - Helpers
+
+    private var currentActiveColor: Color {
+        activeColor == 0 ? firstColor : secondColor
+    }
+
+    private func applyBrightness(_ newBrightness: Double, to color: inout Color) {
+        let uiColor = UIColor(color)
+        var h: CGFloat = 0, s: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
+        uiColor.getHue(&h, saturation: &s, brightness: &b, alpha: &a)
+        color = Color(hue: Double(h), saturation: Double(s), brightness: Double(newBrightness))
+    }
+
+    /// Syncs the brightness slider to the current colour.
+    /// The tolerance guard naturally prevents feedback loops: when the slider
+    /// sets a colour, the extracted brightness matches the slider value exactly.
+    private func syncBrightnessFromColor(_ color: Color) {
+        let uiColor = UIColor(color)
+        var h: CGFloat = 0, s: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
+        uiColor.getHue(&h, saturation: &s, brightness: &b, alpha: &a)
+        guard abs(Double(b) - brightness) > 0.001 else { return }
+        brightness = Double(b)
+    }
+
+    // MARK: - Mode Tabs
+
     private func modeTab(_ mode: PresetMode, _ icon: String, _ label: String) -> some View {
         let active = selectedMode == mode
         return Button {
-            withAnimation(.easeInOut(duration: 0.2)) { selectedMode = mode }
-            UIImpactFeedbackGenerator(style: .light).impactOccurred()
+            selectedMode = mode
+            HapticHelper.light.fire()
         } label: {
             HStack(spacing: 5) {
                 Image(systemName: icon).font(.system(size: 12))
@@ -285,7 +357,7 @@ struct ColorPresetEditor: View {
             }
             .foregroundColor(active ? .white : .secondary)
             .frame(maxWidth: .infinity)
-            .padding(.vertical, 10)
+            .padding(.vertical, 8)
             .background(active ? firstColor.opacity(0.35) : Color.white.opacity(0.05))
             .clipShape(RoundedRectangle(cornerRadius: 10))
             .overlay(
@@ -295,11 +367,13 @@ struct ColorPresetEditor: View {
         }
     }
 
+    // MARK: - Split Direction Chips
+
     private func splitDirectionChip(_ dir: SplitDirection) -> some View {
         let active = splitDirection == dir
         return Button {
-            withAnimation(.easeInOut(duration: 0.2)) { splitDirection = dir }
-            UIImpactFeedbackGenerator(style: .light).impactOccurred()
+            splitDirection = dir
+            HapticHelper.light.fire()
         } label: {
             HStack(spacing: 4) {
                 splitDirectionIcon(dir)
@@ -308,7 +382,7 @@ struct ColorPresetEditor: View {
                     .font(.system(size: 11, weight: .medium))
             }
             .frame(maxWidth: .infinity)
-            .padding(.vertical, 8)
+            .padding(.vertical, 6)
             .foregroundColor(active ? .white : .white.opacity(0.5))
             .background(
                 active
@@ -337,13 +411,10 @@ struct ColorPresetEditor: View {
                 Rectangle().fill(secondColor)
             }
             .clipShape(RoundedRectangle(cornerRadius: 2))
-        case .diagonalLeft:
+        case .diagonalLeft, .diagonalRight:
+            let (s, e) = dir.gradientPoints
             Rectangle()
-                .fill(LinearGradient(colors: [firstColor, secondColor], startPoint: .topLeading, endPoint: .bottomTrailing))
-                .clipShape(RoundedRectangle(cornerRadius: 2))
-        case .diagonalRight:
-            Rectangle()
-                .fill(LinearGradient(colors: [firstColor, secondColor], startPoint: .topTrailing, endPoint: .bottomLeading))
+                .fill(LinearGradient(colors: [firstColor, secondColor], startPoint: s, endPoint: e))
                 .clipShape(RoundedRectangle(cornerRadius: 2))
         }
     }
@@ -360,35 +431,13 @@ struct ColorPresetEditor: View {
     // MARK: - Save
 
     private func performSave() {
-        let firstUIColor = UIColor(firstColor)
-        var secondUIColor: UIColor?
-        if needsSecondColor { secondUIColor = UIColor(secondColor) }
-
-        let name: String
-        if isEditing, let existing = editingPreset {
-            name = existing.name
-            let updated = LightPreset(
-                id: existing.id, name: name, mode: selectedMode,
-                first: firstUIColor, second: secondUIColor,
-                defaultScreenBrightness: 0.88,
-                splitDirection: splitDirection
-            )
-            if let idx = customPresets.firstIndex(where: { $0.id == existing.id }) {
-                customPresets[idx] = updated
-            }
-        } else {
-            let count = customPresets.count + 1
-            name = "Custom \(count)"
-            let id = UserDefaults.standard.allocateCustomPresetId()
-            let preset = LightPreset(
-                id: id, name: name, mode: selectedMode,
-                first: firstUIColor, second: secondUIColor,
-                defaultScreenBrightness: 0.88,
-                splitDirection: splitDirection
-            )
-            customPresets.append(preset)
-        }
-        UserDefaults.standard.saveCustomPresets(customPresets)
-        isPresented = false
+        let second = needsSecondColor ? UIColor(secondColor) : nil
+        presetManager.savePreset(
+            primary: UIColor(firstColor),
+            secondary: second,
+            mode: selectedMode,
+            splitDirection: splitDirection,
+            editing: editingPreset
+        )
     }
 }

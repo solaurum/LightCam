@@ -37,28 +37,33 @@ class CameraManager: NSObject, ObservableObject {
 
     #if !targetEnvironment(simulator)
     private func setupSession() {
-        session.beginConfiguration()
-        session.sessionPreset = .photo
-
-        guard let camera = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .front),
-              let input = try? AVCaptureDeviceInput(device: camera),
-              session.canAddInput(input) else {
-            session.commitConfiguration()
-            return
-        }
-
-        session.addInput(input)
-        currentInput = input
-
-        if session.canAddOutput(photoOutput) {
-            session.addOutput(photoOutput)
-        }
-
-        session.commitConfiguration()
-
+        // Move the entire session configuration + startRunning off the main
+        // thread onto a dedicated serial queue.  beginConfiguration() and
+        // commitConfiguration() are both safe on a background serial queue,
+        // and this prevents a UI stutter when the deferred start() fires.
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
-            self?.session.startRunning()
-            DispatchQueue.main.async { self?.isSessionReady = true }
+            guard let self else { return }
+            self.session.beginConfiguration()
+            self.session.sessionPreset = .photo
+
+            guard let camera = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .front),
+                  let input = try? AVCaptureDeviceInput(device: camera),
+                  self.session.canAddInput(input) else {
+                self.session.commitConfiguration()
+                return
+            }
+
+            self.session.addInput(input)
+            self.currentInput = input
+
+            if self.session.canAddOutput(self.photoOutput) {
+                self.session.addOutput(self.photoOutput)
+            }
+
+            self.session.commitConfiguration()
+            self.session.startRunning()
+
+            DispatchQueue.main.async { self.isSessionReady = true }
         }
     }
     #endif
