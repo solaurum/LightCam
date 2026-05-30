@@ -3,7 +3,14 @@ import SwiftUI
 enum PresetMode: String, Codable, CaseIterable {
     case solid
     case gradientTopBottom
-    case dualLeftRight
+    case dualLeftRight   // legacy; splitDirection controls the actual layout
+}
+
+enum SplitDirection: String, Codable, CaseIterable {
+    case horizontal       // 左右双色
+    case vertical         // 上下双色
+    case diagonalLeft     // 斜角 (top-left → bottom-right)
+    case diagonalRight    // 斜角 (top-right → bottom-left)
 }
 
 struct LightPreset: Identifiable, Codable {
@@ -21,6 +28,7 @@ struct LightPreset: Identifiable, Codable {
     let secondGreen: Double
     let secondBlue: Double
     let secondAlpha: Double
+    let splitDirection: SplitDirection
     let isCustom: Bool
 
     var uiColor: UIColor {
@@ -38,7 +46,8 @@ struct LightPreset: Identifiable, Codable {
     init(id: Int, name: String, red: Double, green: Double, blue: Double, alpha: Double = 1.0,
          temp: Int, defaultScreenBrightness: Double = 0.88, defaultColorBrightness: Double = 0.0,
          mode: PresetMode = .solid,
-         secondRed: Double = 0, secondGreen: Double = 0, secondBlue: Double = 0, secondAlpha: Double = 0,
+         secondRed: Double = 0, secondGreen: Double = 0, secondBlue: Double = 0, secondAlpha: Double = 1.0,
+         splitDirection: SplitDirection = .horizontal,
          isCustom: Bool = false) {
         self.id = id
         self.name = name
@@ -54,12 +63,14 @@ struct LightPreset: Identifiable, Codable {
         self.secondGreen = secondGreen
         self.secondBlue = secondBlue
         self.secondAlpha = secondAlpha
+        self.splitDirection = splitDirection
         self.isCustom = isCustom
     }
 
     /// Convenience init for custom presets built from UIColor values.
     init(id: Int, name: String, mode: PresetMode, first: UIColor, second: UIColor?,
-         defaultScreenBrightness: Double = 0.88, isCustom: Bool = true) {
+         defaultScreenBrightness: Double = 0.88, splitDirection: SplitDirection = .horizontal,
+         isCustom: Bool = true) {
         var r1: CGFloat = 0, g1: CGFloat = 0, b1: CGFloat = 0, a1: CGFloat = 0
         var r2: CGFloat = 0, g2: CGFloat = 0, b2: CGFloat = 0, a2: CGFloat = 0
         first.getRed(&r1, green: &g1, blue: &b1, alpha: &a1)
@@ -79,7 +90,38 @@ struct LightPreset: Identifiable, Codable {
         self.secondGreen = Double(g2)
         self.secondBlue = Double(b2)
         self.secondAlpha = Double(a2)
+        self.splitDirection = splitDirection
         self.isCustom = isCustom
+    }
+
+    // MARK: - Codable with backward compatibility
+
+    enum CodingKeys: String, CodingKey {
+        case id, name, red, green, blue, alpha, temp
+        case defaultScreenBrightness, defaultColorBrightness
+        case mode, secondRed, secondGreen, secondBlue, secondAlpha
+        case splitDirection, isCustom
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(Int.self, forKey: .id)
+        name = try container.decode(String.self, forKey: .name)
+        red = try container.decode(Double.self, forKey: .red)
+        green = try container.decode(Double.self, forKey: .green)
+        blue = try container.decode(Double.self, forKey: .blue)
+        alpha = try container.decode(Double.self, forKey: .alpha)
+        temp = try container.decode(Int.self, forKey: .temp)
+        defaultScreenBrightness = try container.decode(Double.self, forKey: .defaultScreenBrightness)
+        defaultColorBrightness = try container.decode(Double.self, forKey: .defaultColorBrightness)
+        mode = try container.decode(PresetMode.self, forKey: .mode)
+        secondRed = try container.decode(Double.self, forKey: .secondRed)
+        secondGreen = try container.decode(Double.self, forKey: .secondGreen)
+        secondBlue = try container.decode(Double.self, forKey: .secondBlue)
+        secondAlpha = try container.decode(Double.self, forKey: .secondAlpha)
+        // Backward compatibility: older presets may not have splitDirection
+        splitDirection = try container.decodeIfPresent(SplitDirection.self, forKey: .splitDirection) ?? .horizontal
+        isCustom = try container.decode(Bool.self, forKey: .isCustom)
     }
 }
 

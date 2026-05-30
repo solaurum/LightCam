@@ -130,6 +130,7 @@ struct ColorPresetEditor: View {
     @State private var firstColor: Color = .white
     @State private var secondColor: Color = .gray
     @State private var activeColor: Int = 0
+    @State private var splitDirection: SplitDirection = .horizontal
 
     init(customPresets: Binding<[LightPreset]>, isPresented: Binding<Bool>,
          editingPreset: LightPreset? = nil) {
@@ -140,6 +141,7 @@ struct ColorPresetEditor: View {
             self._selectedMode = State(initialValue: p.mode)
             self._firstColor = State(initialValue: p.color)
             self._secondColor = State(initialValue: p.secondColor)
+            self._splitDirection = State(initialValue: p.splitDirection)
         }
     }
 
@@ -148,7 +150,7 @@ struct ColorPresetEditor: View {
 
     var body: some View {
         GeometryReader { geo in
-            let wheelSize = min(geo.size.width * 0.8, geo.size.height * 0.42)
+            let wheelSize = min(geo.size.width * 0.72, geo.size.height * 0.35)
 
             VStack(spacing: 0) {
                 // Header
@@ -171,43 +173,59 @@ struct ColorPresetEditor: View {
                 .padding(.horizontal, 20)
                 .padding(.top, 14)
 
-                // Full-page color wheel
-                ColorWheel(color: activeColor == 0 ? $firstColor : $secondColor, size: wheelSize)
-                    .padding(.top, 8)
+                ScrollView {
+                    VStack(spacing: 0) {
+                        // Full-page color wheel
+                        ColorWheel(color: activeColor == 0 ? $firstColor : $secondColor, size: wheelSize)
+                            .padding(.top, 8)
 
-                // Dual color selector
-                if needsSecondColor {
-                    HStack(spacing: 16) {
-                        HStack(spacing: 6) {
-                            Circle().fill(firstColor).frame(width: 14, height: 14)
-                            Text(loc.string("primary")).font(.system(size: 11)).foregroundColor(activeColor == 0 ? .white : .secondary)
-                        }
-                        .padding(.horizontal, 10).padding(.vertical, 6)
-                        .background(activeColor == 0 ? Color.white.opacity(0.1) : Color.clear)
-                        .clipShape(Capsule())
-                        .onTapGesture { activeColor = 0 }
+                        // Dual color selector
+                        if needsSecondColor {
+                            HStack(spacing: 16) {
+                                HStack(spacing: 6) {
+                                    Circle().fill(firstColor).frame(width: 14, height: 14)
+                                    Text(loc.string("primary")).font(.system(size: 11)).foregroundColor(activeColor == 0 ? .white : .secondary)
+                                }
+                                .padding(.horizontal, 10).padding(.vertical, 6)
+                                .background(activeColor == 0 ? Color.white.opacity(0.1) : Color.clear)
+                                .clipShape(Capsule())
+                                .onTapGesture { activeColor = 0 }
 
-                        HStack(spacing: 6) {
-                            Circle().fill(secondColor).frame(width: 14, height: 14)
-                            Text(loc.string("secondary")).font(.system(size: 11)).foregroundColor(activeColor == 1 ? .white : .secondary)
+                                HStack(spacing: 6) {
+                                    Circle().fill(secondColor).frame(width: 14, height: 14)
+                                    Text(loc.string("secondary")).font(.system(size: 11)).foregroundColor(activeColor == 1 ? .white : .secondary)
+                                }
+                                .padding(.horizontal, 10).padding(.vertical, 6)
+                                .background(activeColor == 1 ? Color.white.opacity(0.1) : Color.clear)
+                                .clipShape(Capsule())
+                                .onTapGesture { activeColor = 1 }
+                            }
+                            .padding(.top, 10)
                         }
-                        .padding(.horizontal, 10).padding(.vertical, 6)
-                        .background(activeColor == 1 ? Color.white.opacity(0.1) : Color.clear)
-                        .clipShape(Capsule())
-                        .onTapGesture { activeColor = 1 }
+
+                        // Mode selector + direction
+                        VStack(spacing: 6) {
+                            // Mode tabs
+                            HStack(spacing: 6) {
+                                modeTab(.solid, "square.fill", loc.string("mode_solid"))
+                                modeTab(.gradientTopBottom, "square.split.2x1.fill", loc.string("mode_gradient"))
+                                modeTab(.dualLeftRight, "rectangle.split.2x1.fill", loc.string("mode_dual"))
+                            }
+
+                            // Direction chips — full width, equally spaced
+                            if selectedMode != .solid {
+                                HStack(spacing: 8) {
+                                    ForEach(SplitDirection.allCases, id: \.self) { dir in
+                                        splitDirectionChip(dir)
+                                    }
+                                }
+                                .padding(.horizontal, 2)
+                            }
+                        }
+                        .padding(.top, 12)
                     }
-                    .padding(.top, 10)
+                    .padding(.bottom, 12)
                 }
-
-                // Mode selector
-                HStack(spacing: 6) {
-                    modeTab(.solid, "square.fill", loc.string("mode_solid"))
-                    modeTab(.gradientTopBottom, "square.split.2x1.fill", loc.string("mode_gradient"))
-                    modeTab(.dualLeftRight, "rectangle.split.2x1.fill", loc.string("mode_dual"))
-                }
-                .padding(.top, 12)
-
-                Spacer(minLength: 8)
 
                 // Save
                 Button {
@@ -254,6 +272,68 @@ struct ColorPresetEditor: View {
         }
     }
 
+    private func splitDirectionChip(_ dir: SplitDirection) -> some View {
+        let active = splitDirection == dir
+        return Button {
+            withAnimation(.easeInOut(duration: 0.2)) { splitDirection = dir }
+            UIImpactFeedbackGenerator(style: .light).impactOccurred()
+        } label: {
+            HStack(spacing: 4) {
+                splitDirectionIcon(dir)
+                    .frame(width: 16, height: 16)
+                Text(splitDirectionLabel(dir))
+                    .font(.system(size: 11, weight: .medium))
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 8)
+            .foregroundColor(active ? .white : .white.opacity(0.5))
+            .background(
+                active
+                    ? RoundedRectangle(cornerRadius: 10).fill(firstColor.opacity(0.35))
+                    : RoundedRectangle(cornerRadius: 10).fill(Color.white.opacity(0.06))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 10)
+                    .stroke(active ? firstColor.opacity(0.5) : Color.white.opacity(0.1), lineWidth: active ? 1.5 : 1)
+            )
+        }
+    }
+
+    @ViewBuilder
+    private func splitDirectionIcon(_ dir: SplitDirection) -> some View {
+        switch dir {
+        case .horizontal:
+            HStack(spacing: 0) {
+                Rectangle().fill(firstColor)
+                Rectangle().fill(secondColor)
+            }
+            .clipShape(RoundedRectangle(cornerRadius: 2))
+        case .vertical:
+            VStack(spacing: 0) {
+                Rectangle().fill(firstColor)
+                Rectangle().fill(secondColor)
+            }
+            .clipShape(RoundedRectangle(cornerRadius: 2))
+        case .diagonalLeft:
+            Rectangle()
+                .fill(LinearGradient(colors: [firstColor, secondColor], startPoint: .topLeading, endPoint: .bottomTrailing))
+                .clipShape(RoundedRectangle(cornerRadius: 2))
+        case .diagonalRight:
+            Rectangle()
+                .fill(LinearGradient(colors: [firstColor, secondColor], startPoint: .topTrailing, endPoint: .bottomLeading))
+                .clipShape(RoundedRectangle(cornerRadius: 2))
+        }
+    }
+
+    private func splitDirectionLabel(_ dir: SplitDirection) -> String {
+        switch dir {
+        case .horizontal:    return loc.string("split_horizontal")
+        case .vertical:      return loc.string("split_vertical")
+        case .diagonalLeft:  return loc.string("split_diagonal_left")
+        case .diagonalRight: return loc.string("split_diagonal_right")
+        }
+    }
+
     // MARK: - Save
 
     private func performSave() {
@@ -267,7 +347,8 @@ struct ColorPresetEditor: View {
             let updated = LightPreset(
                 id: existing.id, name: name, mode: selectedMode,
                 first: firstUIColor, second: secondUIColor,
-                defaultScreenBrightness: 0.88
+                defaultScreenBrightness: 0.88,
+                splitDirection: splitDirection
             )
             if let idx = customPresets.firstIndex(where: { $0.id == existing.id }) {
                 customPresets[idx] = updated
@@ -279,7 +360,8 @@ struct ColorPresetEditor: View {
             let preset = LightPreset(
                 id: id, name: name, mode: selectedMode,
                 first: firstUIColor, second: secondUIColor,
-                defaultScreenBrightness: 0.88
+                defaultScreenBrightness: 0.88,
+                splitDirection: splitDirection
             )
             customPresets.append(preset)
         }

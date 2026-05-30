@@ -63,24 +63,24 @@ class LocalizationManager: ObservableObject {
     // MARK: - Dictionaries
 
     private let enPresetNames: [Int: String] = [
-        0: "Studio White", 1: "Golden Hour", 2: "Fireside",
-        3: "Morning Mist", 4: "Honey Glow", 5: "Rose Blush", 6: "Twilight Haze",
-        7: "Blue Hour"
+        0: "Sakura Pink", 1: "Golden Hour", 2: "Aurora Purple",
+        3: "Coral Reef", 4: "Glacier Blue", 5: "Matcha Mist", 6: "Smoky Silver",
+        7: "Deep Sea Glow"
     ]
     private let zhPresetNames: [Int: String] = [
-        0: "影棚白光", 1: "落日余晖", 2: "炉火暖光",
-        3: "晨雾柔光", 4: "蜂蜜琥珀", 5: "玫瑰绯红", 6: "暮光紫霞",
-        7: "蓝调时刻"
+        0: "樱花微醺粉", 1: "黄金时刻奶黄", 2: "极光紫薰衣草",
+        3: "珊瑚礁蜜桃", 4: "冰川蓝冰白", 5: "抹茶雾浅绿", 6: "烟灰银珍珠白",
+        7: "深海夜光深蓝"
     ]
     private let koPresetNames: [Int: String] = [
-        0: "스튜디오 화이트", 1: "골든 아워", 2: "파이어사이드",
-        3: "아침 안개", 4: "허니 글로우", 5: "로즈 블러시", 6: "트와일라잇 헤이즈",
-        7: "블루 아워"
+        0: "사쿠라 핑크", 1: "골든 아워", 2: "오로라 퍼플",
+        3: "코랄 리프", 4: "글레이셔 블루", 5: "말차 미스트", 6: "스모키 실버",
+        7: "딥씨 글로우"
     ]
     private let jaPresetNames: [Int: String] = [
-        0: "スタジオホワイト", 1: "ゴールデンアワー", 2: "ファイヤーサイド",
-        3: "朝霧", 4: "ハニーグロー", 5: "ローズブラッシュ", 6: "トワイライトヘイズ",
-        7: "ブルーアワー"
+        0: "桜微醺ピンク", 1: "ゴールデンアワー", 2: "オーロラパープル",
+        3: "コーラルリーフ", 4: "グレイシャーブルー", 5: "抹茶ミスト", 6: "スモーキーシルバー",
+        7: "ディープシーグロー"
     ]
 
     private let strings: [String: [AppLanguage: String]] = [
@@ -125,6 +125,13 @@ class LocalizationManager: ObservableObject {
         "mode_solid": [.english: "Solid", .chinese: "纯色", .korean: "솔리드", .japanese: "ソリッド"],
         "mode_gradient": [.english: "Gradient", .chinese: "渐变", .korean: "그라데이션", .japanese: "グラデーション"],
         "mode_dual": [.english: "Dual", .chinese: "双色", .korean: "듀얼", .japanese: "デュアル"],
+
+        // Split direction
+        "split_direction": [.english: "Split Direction", .chinese: "双色方向", .korean: "분할 방향", .japanese: "分割方向"],
+        "split_horizontal": [.english: "L-R", .chinese: "左右", .korean: "좌우", .japanese: "左右"],
+        "split_vertical": [.english: "T-B", .chinese: "上下", .korean: "상하", .japanese: "上下"],
+        "split_diagonal_left": [.english: "Diag ↙", .chinese: "斜角↙", .korean: "대각 ↙", .japanese: "斜め↙"],
+        "split_diagonal_right": [.english: "Diag ↘", .chinese: "斜角↘", .korean: "대각 ↘", .japanese: "斜め↘"],
 
         // Language
         "language": [.english: "Language", .chinese: "语言", .korean: "언어", .japanese: "言語"],

@@ -84,10 +84,45 @@ struct ColorPreviewView: View {
                 endPoint: .bottomTrailing
             )
         case .split:
+            splitPreview
+        }
+    }
+
+    @ViewBuilder
+    private var splitPreview: some View {
+        let primary = Color(colorData.primaryColor)
+        let secondary = Color(colorData.secondaryColor ?? .white)
+        let direction = colorData.splitDirection ?? .horizontal
+
+        switch direction {
+        case .horizontal:
             HStack(spacing: 0) {
-                Color(colorData.primaryColor)
-                Color(colorData.secondaryColor ?? .white)
+                primary
+                secondary
             }
+        case .vertical:
+            VStack(spacing: 0) {
+                primary
+                secondary
+            }
+        case .diagonalLeft:
+            LinearGradient(
+                stops: [
+                    .init(color: primary, location: 0.48),
+                    .init(color: secondary, location: 0.52),
+                ],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+        case .diagonalRight:
+            LinearGradient(
+                stops: [
+                    .init(color: primary, location: 0.48),
+                    .init(color: secondary, location: 0.52),
+                ],
+                startPoint: .topTrailing,
+                endPoint: .bottomLeading
+            )
         }
     }
 }
