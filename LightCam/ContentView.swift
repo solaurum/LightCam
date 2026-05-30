@@ -249,6 +249,17 @@ struct ContentView: View {
                 if showingLanguagePicker {
                     languagePickerOverlay
                 }
+
+                // MARK: - Color Editor Bottom Panel (no dimming, edge-to-edge)
+                if showingColorEditor {
+                    ColorPresetEditor(customPresets: $customPresets, isPresented: $showingColorEditor,
+                                      editingPreset: editingPreset)
+                        .environmentObject(loc)
+                        .frame(height: geometry.size.height * 0.5)
+                        .frame(maxHeight: .infinity, alignment: .bottom)
+                        .transition(.move(edge: .bottom))
+                        .zIndex(100)
+                }
             }
         }
         .ignoresSafeArea()
@@ -263,13 +274,6 @@ struct ContentView: View {
             UIScreen.main.brightness = screenBrightness
         }
         .fullScreenCover(isPresented: $showingPresets) { presetPicker }
-        .sheet(isPresented: $showingColorEditor) {
-            ColorPresetEditor(customPresets: $customPresets, isPresented: $showingColorEditor,
-                              editingPreset: editingPreset)
-                .environmentObject(loc)
-                .presentationDetents([.medium, .large])
-                .presentationDragIndicator(.visible)
-        }
         .alert(loc.string("camera_permission_denied"), isPresented: $showingPermissionAlert) {
             Button(loc.string("open_settings"), action: openSettings)
             Button(loc.string("cancel"), role: .cancel) {}
@@ -851,7 +855,9 @@ struct ContentView: View {
             editingPreset = nil
             showingPresets = false
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                showingColorEditor = true
+                withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+                    showingColorEditor = true
+                }
             }
         } label: {
             VStack(spacing: 6) {
@@ -1032,7 +1038,9 @@ struct ContentView: View {
         editingPreset = p
         showingPresets = false
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-            showingColorEditor = true
+            withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+                showingColorEditor = true
+            }
         }
     }
 

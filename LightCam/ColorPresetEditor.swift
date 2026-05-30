@@ -150,104 +150,127 @@ struct ColorPresetEditor: View {
 
     var body: some View {
         GeometryReader { geo in
-            let wheelSize = min(geo.size.width * 0.72, geo.size.height * 0.35)
+            let wheelSize = min(geo.size.width * 0.66, geo.size.height * 0.38)
 
-            VStack(spacing: 0) {
-                // Header
-                HStack {
-                    Text(isEditing ? loc.string("edit_preset") : loc.string("new_preset"))
-                        .font(.system(size: 17, weight: .bold))
-                        .foregroundColor(.white)
-                    Spacer()
-                    Button {
-                        isPresented = false
-                    } label: {
-                        Image(systemName: "xmark")
-                            .font(.system(size: 13, weight: .bold))
-                            .foregroundColor(.white.opacity(0.6))
-                            .frame(width: 28, height: 28)
-                            .background(Color.white.opacity(0.1))
-                            .clipShape(Circle())
-                    }
-                }
-                .padding(.horizontal, 20)
-                .padding(.top, 14)
+            ZStack {
+                // Background — matching presets picker
+                LinearGradient(
+                    colors: [Color(red: 0.06, green: 0.04, blue: 0.12),
+                             Color(red: 0.03, green: 0.02, blue: 0.08)],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
 
-                ScrollView {
-                    VStack(spacing: 0) {
-                        // Full-page color wheel
-                        ColorWheel(color: activeColor == 0 ? $firstColor : $secondColor, size: wheelSize)
-                            .padding(.top, 8)
+                // Subtle sparkles
+                AnimeSparkleView(count: 5, color: Color(red: 0.706, green: 0.573, blue: 0.878))
+                    .allowsHitTesting(false)
 
-                        // Dual color selector
-                        if needsSecondColor {
-                            HStack(spacing: 16) {
-                                HStack(spacing: 6) {
-                                    Circle().fill(firstColor).frame(width: 14, height: 14)
-                                    Text(loc.string("primary")).font(.system(size: 11)).foregroundColor(activeColor == 0 ? .white : .secondary)
-                                }
-                                .padding(.horizontal, 10).padding(.vertical, 6)
-                                .background(activeColor == 0 ? Color.white.opacity(0.1) : Color.clear)
-                                .clipShape(Capsule())
-                                .onTapGesture { activeColor = 0 }
-
-                                HStack(spacing: 6) {
-                                    Circle().fill(secondColor).frame(width: 14, height: 14)
-                                    Text(loc.string("secondary")).font(.system(size: 11)).foregroundColor(activeColor == 1 ? .white : .secondary)
-                                }
-                                .padding(.horizontal, 10).padding(.vertical, 6)
-                                .background(activeColor == 1 ? Color.white.opacity(0.1) : Color.clear)
-                                .clipShape(Capsule())
-                                .onTapGesture { activeColor = 1 }
+                VStack(spacing: 0) {
+                    // Header
+                    HStack {
+                        Text(isEditing ? loc.string("edit_preset") : loc.string("new_preset"))
+                            .font(.system(size: 17, weight: .bold))
+                            .foregroundColor(.white)
+                        Spacer()
+                        Button {
+                            withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+                                isPresented = false
                             }
-                            .padding(.top, 10)
+                        } label: {
+                            Image(systemName: "xmark")
+                                .font(.system(size: 13, weight: .bold))
+                                .foregroundColor(.white.opacity(0.6))
+                                .frame(width: 28, height: 28)
+                                .background(Color.white.opacity(0.1))
+                                .clipShape(Circle())
                         }
+                    }
+                    .padding(.horizontal, 20)
+                    .padding(.top, 16)
+                    .padding(.bottom, 10)
 
-                        // Mode selector + direction
-                        VStack(spacing: 6) {
-                            // Mode tabs
-                            HStack(spacing: 6) {
-                                modeTab(.solid, "square.fill", loc.string("mode_solid"))
-                                modeTab(.gradientTopBottom, "square.split.2x1.fill", loc.string("mode_gradient"))
-                                modeTab(.dualLeftRight, "rectangle.split.2x1.fill", loc.string("mode_dual"))
+                    ScrollView {
+                        VStack(spacing: 14) {
+                            // Color wheel — centered
+                            ColorWheel(color: activeColor == 0 ? $firstColor : $secondColor, size: wheelSize)
+
+                            // Dual color selector
+                            if needsSecondColor {
+                                HStack(spacing: 14) {
+                                    colorChip(label: loc.string("primary"), color: firstColor, isActive: activeColor == 0)
+                                        .onTapGesture { activeColor = 0 }
+                                    colorChip(label: loc.string("secondary"), color: secondColor, isActive: activeColor == 1)
+                                        .onTapGesture { activeColor = 1 }
+                                }
                             }
 
-                            // Direction chips — full width, equally spaced
-                            if selectedMode != .solid {
-                                HStack(spacing: 8) {
-                                    ForEach(SplitDirection.allCases, id: \.self) { dir in
-                                        splitDirectionChip(dir)
+                            // Mode selector + direction — card style
+                            VStack(spacing: 10) {
+                                HStack(spacing: 6) {
+                                    modeTab(.solid, "square.fill", loc.string("mode_solid"))
+                                    modeTab(.gradientTopBottom, "square.split.2x1.fill", loc.string("mode_gradient"))
+                                    modeTab(.dualLeftRight, "rectangle.split.2x1.fill", loc.string("mode_dual"))
+                                }
+
+                                if selectedMode != .solid {
+                                    HStack(spacing: 8) {
+                                        ForEach(SplitDirection.allCases, id: \.self) { dir in
+                                            splitDirectionChip(dir)
+                                        }
                                     }
                                 }
-                                .padding(.horizontal, 2)
                             }
+                            .padding(12)
+                            .background(Color.white.opacity(0.03))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 14)
+                                    .stroke(Color.white.opacity(0.06), lineWidth: 0.5)
+                            )
+                            .clipShape(RoundedRectangle(cornerRadius: 14))
                         }
-                        .padding(.top, 12)
+                        .padding(.horizontal, 20)
+                        .padding(.bottom, 12)
                     }
-                    .padding(.bottom, 12)
-                }
 
-                // Save
-                Button {
-                    UIImpactFeedbackGenerator(style: .heavy).impactOccurred()
-                    performSave()
-                } label: {
-                    Text(isEditing ? loc.string("update") : loc.string("save_preset"))
-                        .font(.system(size: 16, weight: .semibold))
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 15)
-                        .background(firstColor.opacity(0.45))
-                        .overlay(RoundedRectangle(cornerRadius: 14).stroke(Color.white.opacity(0.12), lineWidth: 1))
-                        .clipShape(RoundedRectangle(cornerRadius: 14))
+                    // Save button — centered, narrow
+                    Button {
+                        UIImpactFeedbackGenerator(style: .heavy).impactOccurred()
+                        performSave()
+                    } label: {
+                        Text(isEditing ? loc.string("update") : loc.string("save_preset"))
+                            .font(.system(size: 15, weight: .semibold))
+                            .foregroundColor(.white)
+                            .padding(.horizontal, 42)
+                            .padding(.vertical, 12)
+                            .background(firstColor.opacity(0.45))
+                            .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.white.opacity(0.12), lineWidth: 1))
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                    }
+                    .padding(.bottom, max(geo.safeAreaInsets.bottom, 12))
                 }
-                .padding(.horizontal, 20)
-                .padding(.bottom, 28)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
-        .background(Color(white: 0.12))
         .preferredColorScheme(.dark)
+    }
+
+    // MARK: - Color Chip
+
+    private func colorChip(label: String, color: Color, isActive: Bool) -> some View {
+        HStack(spacing: 6) {
+            Circle().fill(color).frame(width: 14, height: 14)
+            Text(label)
+                .font(.system(size: 11, weight: .medium))
+                .foregroundColor(isActive ? .white : .white.opacity(0.45))
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 7)
+        .background(isActive ? Color.white.opacity(0.1) : Color.white.opacity(0.03))
+        .clipShape(Capsule())
+        .overlay(
+            Capsule()
+                .stroke(isActive ? firstColor.opacity(0.4) : Color.white.opacity(0.06), lineWidth: 1)
+        )
     }
 
     private func modeTab(_ mode: PresetMode, _ icon: String, _ label: String) -> some View {
