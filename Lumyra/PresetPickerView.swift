@@ -15,7 +15,7 @@ struct PresetPickerView: View {
         GeometryReader { geo in
             ZStack {
                 // Background
-                AnimeStarryBackground()
+                GalaxyBackground()
                     .ignoresSafeArea()
                     .allowsHitTesting(false)
 
@@ -25,9 +25,10 @@ struct PresetPickerView: View {
 
                 VStack(spacing: 0) {
                     header
+                        .padding(.top, max(geo.safeAreaInsets.top, 8))
+                        .background(headerBackground.ignoresSafeArea(edges: .top))
                     presetGrid
                 }
-                .padding(.top, max(geo.safeAreaInsets.top, 8))
             }
         }
         .preferredColorScheme(.dark)
@@ -85,7 +86,6 @@ struct PresetPickerView: View {
         }
         .padding(.horizontal, 20)
         .frame(height: 56)
-        .background(headerBackground)
     }
 
     /// Glass-morphism header with subtle warm gradient and bottom hairline.

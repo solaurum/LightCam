@@ -169,114 +169,107 @@ struct ColorPresetEditor: View {
             let wheelSize = min(geo.size.width * 0.66, geo.size.height * 0.24)
 
             ZStack {
-                // Background — starry sky shared with preset picker
-                AnimeStarryBackground()
+                // Background
+                GalaxyBackground()
+                    .ignoresSafeArea()
+                    .allowsHitTesting(false)
+
+                // Floating sparkles
+                AnimeSparkleView(count: 10, color: AnimeTheme.starlight)
+                    .allowsHitTesting(false)
 
                 VStack(spacing: 0) {
-                    // Header
-                    HStack {
-                        Text(isEditing ? loc.string("edit_preset") : loc.string("new_preset"))
-                            .font(.system(size: 17, weight: .bold))
-                            .foregroundColor(.white)
-                        Spacer()
-                        Button {
-                            presetManager.closeEditor()
-                        } label: {
-                            Image(systemName: "xmark")
-                                .font(.system(size: 13, weight: .bold))
-                                .foregroundColor(.white.opacity(0.6))
-                                .frame(width: 44, height: 44)
-                                .background(Circle().fill(Color.white.opacity(0.1)))
-                        }
-                        .contentShape(Circle())
-                    }
-                    .padding(.horizontal, 20)
-                    .padding(.top, 10)
-                    .padding(.bottom, 4)
+                    // Header — glass-morphism matching preset picker
+                    editorHeader
+                        .background(editorHeaderBackground)
 
-                    VStack(spacing: 8) {
-                        // Color wheel
-                        ColorWheel(color: activeColor == 0 ? $firstColor : $secondColor, size: wheelSize)
+                    // Scrollable content
+                    ScrollView(showsIndicators: false) {
+                        VStack(spacing: 8) {
+                            // Color wheel
+                            ColorWheel(color: activeColor == 0 ? $firstColor : $secondColor, size: wheelSize)
 
-                        // Brightness slider
-                        VStack(spacing: 4) {
-                            HStack {
-                                Image(systemName: "sun.min")
-                                    .font(.system(size: 10))
-                                    .foregroundColor(.white.opacity(0.35))
-                                Slider(value: $brightness, in: 0.0...1.0)
-                                    .tint(currentActiveColor)
-                                    .onChange(of: brightness) { newValue in
-                                        if activeColor == 0 {
-                                            applyBrightness(newValue, to: &firstColor)
-                                        } else {
-                                            applyBrightness(newValue, to: &secondColor)
+                            // Brightness slider
+                            VStack(spacing: 4) {
+                                HStack {
+                                    Image(systemName: "sun.min")
+                                        .font(.system(size: 10))
+                                        .foregroundColor(.white.opacity(0.35))
+                                    Slider(value: $brightness, in: 0.0...1.0)
+                                        .tint(currentActiveColor)
+                                        .onChange(of: brightness) { newValue in
+                                            if activeColor == 0 {
+                                                applyBrightness(newValue, to: &firstColor)
+                                            } else {
+                                                applyBrightness(newValue, to: &secondColor)
+                                            }
                                         }
-                                    }
-                                Image(systemName: "sun.max")
-                                    .font(.system(size: 12))
-                                    .foregroundColor(.white.opacity(0.5))
+                                    Image(systemName: "sun.max")
+                                        .font(.system(size: 12))
+                                        .foregroundColor(.white.opacity(0.5))
+                                }
+                                Text(loc.string("brightness"))
+                                    .font(.system(size: 9))
+                                    .foregroundColor(.white.opacity(0.3))
                             }
-                            Text(loc.string("brightness"))
-                                .font(.system(size: 9))
-                                .foregroundColor(.white.opacity(0.3))
-                        }
-                        .padding(.horizontal, 4)
+                            .padding(.horizontal, 4)
 
-                        // Dual color selector
-                        if needsSecondColor {
-                            HStack(spacing: 14) {
-                                colorChip(label: loc.string("primary"), color: firstColor, isActive: activeColor == 0)
-                                    .onTapGesture { activeColor = 0 }
-                                colorChip(label: loc.string("secondary"), color: secondColor, isActive: activeColor == 1)
-                                    .onTapGesture { activeColor = 1 }
-                            }
-                        }
-
-                        // Mode selector + direction
-                        VStack(spacing: 6) {
-                            HStack(spacing: 6) {
-                                modeTab(.solid, "square.fill", loc.string("mode_solid"))
-                                modeTab(.gradient, "square.split.2x1.fill", loc.string("mode_gradient"))
-                                modeTab(.dual, "rectangle.split.2x1.fill", loc.string("mode_dual"))
+                            // Dual color selector
+                            if needsSecondColor {
+                                HStack(spacing: 14) {
+                                    colorChip(label: loc.string("primary"), color: firstColor, isActive: activeColor == 0)
+                                        .onTapGesture { activeColor = 0 }
+                                    colorChip(label: loc.string("secondary"), color: secondColor, isActive: activeColor == 1)
+                                        .onTapGesture { activeColor = 1 }
+                                }
                             }
 
-                            if selectedMode != .solid {
-                                HStack(spacing: 8) {
-                                    ForEach(SplitDirection.allCases, id: \.self) { dir in
-                                        splitDirectionChip(dir)
+                            // Mode selector + direction
+                            VStack(spacing: 6) {
+                                HStack(spacing: 6) {
+                                    modeTab(.solid, "square.fill", loc.string("mode_solid"))
+                                    modeTab(.gradient, "square.split.2x1.fill", loc.string("mode_gradient"))
+                                    modeTab(.dual, "rectangle.split.2x1.fill", loc.string("mode_dual"))
+                                }
+
+                                if selectedMode != .solid {
+                                    HStack(spacing: 8) {
+                                        ForEach(SplitDirection.allCases, id: \.self) { dir in
+                                            splitDirectionChip(dir)
+                                        }
                                     }
                                 }
                             }
+                            .padding(8)
+                            .background(Color.white.opacity(0.03))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 14)
+                                    .stroke(Color.white.opacity(0.06), lineWidth: 0.5)
+                            )
+                            .clipShape(RoundedRectangle(cornerRadius: 14))
                         }
-                        .padding(8)
-                        .background(Color.white.opacity(0.03))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 14)
-                                .stroke(Color.white.opacity(0.06), lineWidth: 0.5)
-                        )
-                        .clipShape(RoundedRectangle(cornerRadius: 14))
-                    }
-                    .padding(.horizontal, 20)
-                    .padding(.bottom, 6)
+                        .padding(.horizontal, 20)
+                        .padding(.top, 20)
+                        .padding(.bottom, 6)
 
-                    // Save button
-                    Button {
-                        HapticHelper.heavy.fire()
-                        performSave()
-                    } label: {
-                        Text(isEditing ? loc.string("update") : loc.string("save_preset"))
-                            .font(.system(size: 15, weight: .semibold))
-                            .foregroundColor(.white)
-                            .padding(.horizontal, 42)
-                            .padding(.vertical, 10)
-                            .background(firstColor.opacity(0.45))
-                            .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.white.opacity(0.12), lineWidth: 1))
-                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                        // Save button
+                        Button {
+                            HapticHelper.heavy.fire()
+                            performSave()
+                        } label: {
+                            Text(isEditing ? loc.string("update") : loc.string("save_preset"))
+                                .font(.system(size: 15, weight: .semibold))
+                                .foregroundColor(.white)
+                                .padding(.horizontal, 42)
+                                .padding(.vertical, 10)
+                                .background(firstColor.opacity(0.45))
+                                .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.white.opacity(0.12), lineWidth: 1))
+                                .clipShape(RoundedRectangle(cornerRadius: 12))
+                        }
+                        .padding(.bottom, max(geo.safeAreaInsets.bottom, 12))
                     }
-                    .padding(.bottom, max(geo.safeAreaInsets.bottom, 12))
+                    .mask(scrollFadeMask)
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
         .preferredColorScheme(.dark)
@@ -297,6 +290,82 @@ struct ColorPresetEditor: View {
         }
         .onChange(of: activeColor) { _ in
             syncBrightnessFromColor(currentActiveColor)
+        }
+    }
+
+    // MARK: - Editor Header
+
+    private var editorHeader: some View {
+        HStack {
+            // Title with sparkle icon
+            HStack(spacing: 8) {
+                Image(systemName: "sparkles")
+                    .font(.system(size: 15, weight: .semibold))
+                    .foregroundColor(AnimeTheme.starlight)
+                Text(isEditing ? loc.string("edit_preset") : loc.string("new_preset"))
+                    .font(.system(size: 17, weight: .bold, design: .rounded))
+                    .foregroundColor(.white)
+            }
+            Spacer()
+            Button {
+                presetManager.closeEditor()
+            } label: {
+                Image(systemName: "xmark")
+                    .font(.system(size: 12, weight: .bold))
+                    .foregroundColor(.white.opacity(0.7))
+                    .frame(width: 34, height: 34)
+                    .background(
+                        Circle()
+                            .fill(.white.opacity(0.1))
+                    )
+            }
+            .contentShape(Circle())
+        }
+        .padding(.horizontal, 20)
+        .frame(height: 56)
+    }
+
+    /// Glass-morphism header matching the preset picker.
+    private var editorHeaderBackground: some View {
+        ZStack {
+            Rectangle()
+                .fill(.ultraThinMaterial)
+
+            Rectangle()
+                .fill(
+                    LinearGradient(
+                        colors: [
+                            .clear,
+                            AnimeTheme.starlight.opacity(0.03),
+                            .clear,
+                        ],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                )
+
+            VStack {
+                Spacer()
+                Rectangle()
+                    .fill(.white.opacity(0.06))
+                    .frame(height: 0.5)
+            }
+        }
+    }
+
+    /// Fades the top edge so content disappears softly behind the glass header.
+    private var scrollFadeMask: some View {
+        VStack(spacing: 0) {
+            LinearGradient(
+                stops: [
+                    .init(color: .clear, location: 0),
+                    .init(color: .black, location: 0.06),
+                ],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .frame(height: 20)
+            Color.black
         }
     }
 

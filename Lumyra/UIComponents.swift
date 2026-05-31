@@ -371,6 +371,130 @@ struct AnimeStarryBackground: View {
     }
 }
 
+// MARK: - Galaxy Background
+
+/// Deep-space nebula background — dark purple-blue #1A1030 base
+/// with layered nebula glows and scattered distant stars.
+struct GalaxyBackground: View {
+    private let baseColor = Color(red: 0.102, green: 0.063, blue: 0.188) // #1A1030
+
+    var body: some View {
+        ZStack {
+            // ── Base: deep purple-blue ────────────────────────────
+            baseColor
+
+            // ── Large soft nebula: centre-right indigo ────────────
+            RadialGradient(
+                colors: [
+                    Color(red: 0.259, green: 0.157, blue: 0.471).opacity(0.55),
+                    .clear
+                ],
+                center: UnitPoint(x: 0.55, y: 0.45),
+                startRadius: 40,
+                endRadius: 340
+            )
+            .blendMode(.screen)
+
+            // ── Nebula: top-left cool violet ──────────────────────
+            RadialGradient(
+                colors: [
+                    Color(red: 0.353, green: 0.220, blue: 0.549).opacity(0.35),
+                    .clear
+                ],
+                center: UnitPoint(x: 0.22, y: 0.25),
+                startRadius: 20,
+                endRadius: 280
+            )
+            .blendMode(.screen)
+
+            // ── Nebula: bottom-right warm purple ──────────────────
+            RadialGradient(
+                colors: [
+                    Color(red: 0.420, green: 0.180, blue: 0.420).opacity(0.30),
+                    .clear
+                ],
+                center: UnitPoint(x: 0.80, y: 0.75),
+                startRadius: 10,
+                endRadius: 300
+            )
+            .blendMode(.screen)
+
+            // ── Subtle core glow: upper-centre blue-violet ────────
+            RadialGradient(
+                colors: [
+                    Color(red: 0.220, green: 0.145, blue: 0.420).opacity(0.40),
+                    .clear
+                ],
+                center: UnitPoint(x: 0.40, y: 0.35),
+                startRadius: 30,
+                endRadius: 400
+            )
+            .blendMode(.screen)
+
+            // ── Darkened edges (vignette) ─────────────────────────
+            RadialGradient(
+                colors: [
+                    .clear,
+                    Color.black.opacity(0.35)
+                ],
+                center: .center,
+                startRadius: 180,
+                endRadius: 420
+            )
+
+            // ── Distant stars ─────────────────────────────────────
+            Canvas { context, size in
+                let starColors: [Color] = [
+                    Color(red: 0.910, green: 0.835, blue: 1.0),   // #E8D5FF lavender
+                    Color(red: 0.780, green: 0.780, blue: 0.960), // cool white-blue
+                    Color(red: 0.890, green: 0.780, blue: 0.950), // pale violet
+                ]
+                let stars: [(x: CGFloat, y: CGFloat, r: CGFloat, opacity: Double)] = [
+                    (0.08, 0.12, 1.2, 0.55),
+                    (0.35, 0.18, 0.8, 0.40),
+                    (0.72, 0.22, 1.5, 0.60),
+                    (0.55, 0.38, 1.0, 0.45),
+                    (0.18, 0.48, 0.7, 0.35),
+                    (0.85, 0.50, 1.1, 0.50),
+                    (0.42, 0.62, 0.9, 0.40),
+                    (0.68, 0.72, 1.3, 0.55),
+                    (0.22, 0.78, 0.6, 0.30),
+                    (0.90, 0.85, 1.0, 0.45),
+                    (0.15, 0.35, 0.5, 0.25),
+                    (0.50, 0.82, 0.8, 0.35),
+                    (0.78, 0.10, 0.7, 0.30),
+                    (0.60, 0.55, 1.4, 0.55),
+                    (0.32, 0.70, 0.6, 0.28),
+                    (0.05, 0.60, 0.9, 0.38),
+                    (0.95, 0.35, 0.5, 0.22),
+                    (0.44, 0.08, 0.4, 0.20),
+                ]
+                for star in stars {
+                    let color = starColors.randomElement() ?? starColors[0]
+                    let rect = CGRect(
+                        x: star.x * size.width - star.r,
+                        y: star.y * size.height - star.r,
+                        width: star.r * 2,
+                        height: star.r * 2
+                    )
+                    // Soft glow
+                    let glowRect = rect.insetBy(dx: -star.r, dy: -star.r)
+                    context.fill(
+                        Path(ellipseIn: glowRect),
+                        with: .color(color.opacity(star.opacity * 0.25))
+                    )
+                    // Core
+                    context.fill(
+                        Path(ellipseIn: rect),
+                        with: .color(color.opacity(star.opacity))
+                    )
+                }
+            }
+            .allowsHitTesting(false)
+        }
+    }
+}
+
 // MARK: - Anime Shutter Button Style
 
 struct AnimeShutterButtonStyle: ButtonStyle {
