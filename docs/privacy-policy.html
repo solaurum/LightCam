@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lumyra 隐私政策</title>
+    <style>
+        :root {
+            --bg: #0D0820;
+            --bg-card: #1A1030;
+            --text: #E8D5FF;
+            --accent: #A855C8;
+            --border: rgba(168, 85, 200, 0.2);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
+            background: var(--bg);
+            color: #fff;
+            min-height: 100vh;
+            line-height: 1.7;
+        }
+        body::before {
+            content: '';
+            position: fixed; inset: 0; z-index: 0;
+            background:
+                radial-gradient(ellipse at 70% 80%, rgba(168, 85, 200, 0.25) 0%, transparent 50%),
+                radial-gradient(ellipse at 30% 20%, rgba(107, 63, 160, 0.15) 0%, transparent 40%),
+                linear-gradient(160deg, #0D0820 0%, #1A1030 30%, #2D1850 60%, #1A1030 100%);
+        }
+        body::after {
+            content: '';
+            position: fixed; inset: 0; z-index: 0; pointer-events: none;
+            background-image:
+                radial-gradient(1px 1px at 10% 15%, rgba(232, 213, 255, 0.55), transparent),
+                radial-gradient(1px 1px at 40% 45%, rgba(232, 213, 255, 0.4), transparent),
+                radial-gradient(1.5px 1.5px at 80% 25%, rgba(232, 213, 255, 0.55), transparent),
+                radial-gradient(1px 1px at 60% 70%, rgba(232, 213, 255, 0.45), transparent),
+                radial-gradient(1px 1px at 25% 80%, rgba(232, 213, 255, 0.4), transparent),
+                radial-gradient(0.8px 0.8px at 50% 40%, rgba(232, 213, 255, 0.5), transparent),
+                radial-gradient(1.2px 1.2px at 85% 55%, rgba(232, 213, 255, 0.4), transparent),
+                radial-gradient(0.7px 0.7px at 18% 60%, rgba(232, 213, 255, 0.35), transparent),
+                radial-gradient(1px 1px at 48% 85%, rgba(232, 213, 255, 0.45), transparent),
+                radial-gradient(0.9px 0.9px at 75% 15%, rgba(232, 213, 255, 0.5), transparent);
+        }
+        .container { position: relative; z-index: 1; max-width: 680px; margin: 0 auto; padding: 48px 24px; }
+        .hero { text-align: center; padding: 32px 0 24px; }
+        .hero .logo { font-size: 40px; margin-bottom: 8px; }
+        .hero h1 {
+            font-size: 28px; font-weight: 700;
+            background: linear-gradient(135deg, #E8D5FF 0%, #A855C8 60%, #6B3FA0 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .hero .subtitle { color: rgba(232, 213, 255, 0.45); font-size: 13px; margin-top: 6px; }
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 28px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 20px rgba(168, 85, 200, 0.1);
+        }
+        .card h2 { font-size: 18px; color: var(--text); margin: 24px 0 10px; }
+        .card h2:first-child { margin-top: 0; }
+        .card h3 { font-size: 15px; color: var(--text); margin: 16px 0 6px; }
+        .card p, .card li { color: rgba(232, 213, 255, 0.65); font-size: 14px; }
+        .card ul { padding-left: 20px; margin: 8px 0; }
+        .card li { margin-bottom: 4px; }
+        .card a { color: var(--accent); text-decoration: none; border-bottom: 1px solid var(--accent); }
+        .card a:hover { color: #c084e0; border-color: #c084e0; }
+        .effective-date { color: rgba(232, 213, 255, 0.4); font-size: 13px; margin-bottom: 6px; }
+        .back-link { text-align: center; margin-top: 24px; }
+        .back-link a { color: var(--accent); text-decoration: none; font-size: 14px; }
+        .back-link a:hover { color: #c084e0; }
+        .footer { text-align: center; color: rgba(232, 213, 255, 0.25); font-size: 11px; padding: 24px 0; }
+        @media (max-width: 480px) {
+            .container { padding: 32px 16px; }
+            .hero h1 { font-size: 24px; }
+            .card { padding: 18px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="hero">
+            <div class="logo">🔒</div>
+            <h1>隐私政策</h1>
+            <p class="subtitle">Lumyra · 暗光自拍的二次元补光相机</p>
+        </header>
+
+        <div class="card">
+            <p class="effective-date">生效日期：2026 年 5 月 31 日</p>
+
+            <h2>概述</h2>
+            <p>Lumyra（以下简称"本应用"或"我们"）是一款离线补光相机应用。我们高度重视你的隐私。本隐私政策旨在清晰地说明本应用如何处理你的数据。</p>
+
+            <h2>我们收集的信息</h2>
+            <p><strong>我们不收集任何个人信息。</strong></p>
+            <ul>
+                <li>我们不收集你的姓名、邮箱、位置、设备标识符或任何其他个人身份信息。</li>
+                <li>我们不会将你的照片或视频上传到任何服务器。</li>
+                <li>我们不会使用任何第三方分析工具（如 Google Analytics、Firebase 等）。</li>
+                <li>我们不会展示广告，也不会集成任何广告 SDK。</li>
+            </ul>
+
+            <h2>设备权限说明</h2>
+            <p>本应用请求以下设备权限，<strong>均仅用于实现核心功能，不会将任何数据传出设备</strong>：</p>
+
+            <h3>📷 相机权限 (<code>NSCameraUsageDescription</code>)</h3>
+            <p>用途：在取景框中实时预览画面，以便你调整补光效果并进行拍照。所有相机数据处理完全在你的设备本地进行，我们不会访问、存储或传输任何图像数据。</p>
+
+            <h3>🖼️ 相册写入权限 (<code>NSPhotoLibraryAddUsageDescription</code>)</h3>
+            <p>用途：将你拍摄的照片保存到系统相册中。本应用<strong>仅请求写入权限</strong>，不请求相册读取权限，无法浏览你的相册内容。</p>
+
+            <h2>数据存储与安全</h2>
+            <ul>
+                <li><strong>自定义预设</strong>：你创建的补光颜色预设仅存储在你的设备本地。</li>
+                <li><strong>应用设置</strong>：语言偏好等设置仅存储在你的设备本地。</li>
+                <li><strong>照片</strong>：你拍摄的照片直接保存到设备相册，本应用不保留副本。</li>
+            </ul>
+            <p>所有数据均存储在你的设备上，受 iOS 系统安全机制保护。因为我们不收集任何数据，所以不存在数据泄露或数据共享的风险。</p>
+
+            <h2>第三方服务</h2>
+            <p>本应用<strong>不使用任何第三方服务</strong>：</p>
+            <ul>
+                <li>无第三方 SDK</li>
+                <li>无广告网络</li>
+                <li>无分析或统计工具</li>
+                <li>无云端存储或同步服务</li>
+            </ul>
+
+            <h2>儿童隐私</h2>
+            <p>本应用不收集任何人的任何个人信息，包括 13 岁以下儿童。由于本应用完全离线运行且不收集数据，我们认为它对所有年龄段的用户都是安全的。</p>
+
+            <h2>政策变更</h2>
+            <p>如果我们的隐私做法在未来发生变化（例如加入新功能），我们会在本页面更新此隐私政策，并在应用中适时通知用户。</p>
+
+            <h2>联系我们</h2>
+            <p>如果你对本隐私政策有任何疑问，请通过以下方式联系我们：</p>
+            <p>📧 邮箱：<a href="mailto:505793318@qq.com">505793318@qq.com</a></p>
+            <p>💻 GitHub：<a href="https://github.com/solaurum/LightCam" target="_blank">solaurum/LightCam</a></p>
+        </div>
+
+        <div class="back-link">
+            <a href="index.html">← 返回支持页面</a>
+        </div>
+
+        <footer class="footer">
+            <p>&copy; 2026 Lumyra · 保留所有权利</p>
+        </footer>
+    </div>
+</body>
+</html>
