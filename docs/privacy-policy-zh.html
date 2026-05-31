@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lumyra 隐私政策</title>
+    <style>
+        :root {
+            --bg: #0D0820;
+            --bg-card: #1A1030;
+            --text: #E8D5FF;
+            --accent: #A855C8;
+            --border: rgba(168, 85, 200, 0.2);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
+            background: var(--bg);
+            color: #fff;
+            min-height: 100vh;
+            line-height: 1.8;
+        }
+        body::before {
+            content: '';
+            position: fixed; inset: 0; z-index: 0;
+            background:
+                radial-gradient(ellipse at 70% 80%, rgba(168, 85, 200, 0.25) 0%, transparent 50%),
+                radial-gradient(ellipse at 30% 20%, rgba(107, 63, 160, 0.15) 0%, transparent 40%),
+                linear-gradient(160deg, #0D0820 0%, #1A1030 30%, #2D1850 60%, #1A1030 100%);
+        }
+        .container { position: relative; z-index: 1; max-width: 680px; margin: 0 auto; padding: 48px 24px; }
+        h1 {
+            font-size: 28px; font-weight: 700; margin-bottom: 8px;
+            background: linear-gradient(135deg, #E8D5FF 0%, #A855C8 60%, #6B3FA0 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .update-date { color: rgba(232, 213, 255, 0.4); font-size: 13px; margin-bottom: 32px; }
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 28px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 20px rgba(168, 85, 200, 0.1);
+        }
+        .card h2 { font-size: 18px; color: var(--text); margin-bottom: 12px; }
+        .card p, .card li { color: rgba(232, 213, 255, 0.7); font-size: 14px; margin-bottom: 6px; }
+        .card ul { padding-left: 20px; margin-bottom: 8px; }
+        a { color: var(--accent); text-decoration: none; }
+        .footer { text-align: center; color: rgba(232, 213, 255, 0.25); font-size: 11px; padding: 24px 0; margin-top: 8px; }
+        @media (max-width: 480px) {
+            .container { padding: 32px 16px; }
+            h1 { font-size: 24px; }
+            .card { padding: 18px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>隐私政策</h1>
+        <p class="update-date">最后更新日期：2026年5月31日</p>
+
+        <div class="card">
+            <h2>概述</h2>
+            <p>Lumyra（"我们"）深知隐私的重要性。本隐私政策说明了我们如何收集、使用和披露您的信息。</p>
+            <p><strong>核心原则：我们不收集任何个人信息。</strong></p>
+        </div>
+
+        <div class="card">
+            <h2>我们收集的信息</h2>
+            <p>Lumyra <strong>不收集</strong>以下任何信息：</p>
+            <ul>
+                <li><strong>个人身份信息</strong> — 姓名、邮箱、电话号码、地址等</li>
+                <li><strong>位置数据</strong> — GPS 坐标、Wi-Fi 定位等</li>
+                <li><strong>使用数据</strong> — 应用使用统计、点击行为等</li>
+                <li><strong>设备信息</strong> — UDID、广告标识符（IDFA）等</li>
+                <li><strong>照片或相机数据</strong> — 所有照片和取景器数据仅保存在您的设备本地</li>
+            </ul>
+            <p>应用使用相机权限仅用于实时取景和拍照功能，所有图像处理均在设备本地完成。</p>
+        </div>
+
+        <div class="card">
+            <h2>数据存储</h2>
+            <p>您在应用中创建的所有数据（包括自定义光效预设、设置偏好）仅存储在您的设备本地。我们没有任何后端服务器，也不将任何数据上传到云端。</p>
+        </div>
+
+        <div class="card">
+            <h2>第三方服务</h2>
+            <p>Lumyra <strong>不集成</strong>任何第三方分析、广告或追踪 SDK。我们不会与任何第三方共享您的信息。</p>
+            <p>应用内唯一使用的第三方组件是 <a href="https://github.com/Akylas/SimulatorCamera" target="_blank">SimulatorCamera</a>（MIT 开源协议），该组件仅用于模拟器开发测试，不涉及任何数据收集。</p>
+        </div>
+
+        <div class="card">
+            <h2>Game Center</h2>
+            <p>如果您选择使用 Game Center 功能，Apple 可能会根据其隐私政策处理您的 Game Center 数据（如玩家 ID、排行榜分数）。我们不会访问或存储这些数据。请参阅 <a href="https://www.apple.com/legal/privacy/" target="_blank">Apple 隐私政策</a> 了解更多。</p>
+        </div>
+
+        <div class="card">
+            <h2>儿童隐私</h2>
+            <p>Lumyra 不针对 13 岁以下的儿童。我们不会有意收集任何年龄段的个人信息。</p>
+        </div>
+
+        <div class="card">
+            <h2>政策变更</h2>
+            <p>我们可能会不时更新本隐私政策。如有重大变更，我们将在应用内通知您。建议您定期查看本页面以了解最新信息。</p>
+        </div>
+
+        <div class="card">
+            <h2>联系我们</h2>
+            <p>如对本隐私政策有任何疑问，请通过以下方式联系我们：</p>
+            <p>邮箱：<a href="mailto:505793318@qq.com">505793318@qq.com</a></p>
+            <p>GitHub：<a href="https://github.com/solaurum/Lumyra" target="_blank">solaurum/Lumyra</a></p>
+        </div>
+
+        <footer class="footer">
+            <p>&copy; 2026 Lumyra · 保留所有权利</p>
+        </footer>
+    </div>
+</body>
+</html>
