@@ -116,6 +116,15 @@
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 2650;
 				LastUpgradeCheck = 2650;
+				TargetAttributes = {
+					26CF2FD3B10D473DA735E291 = {
+						SystemCapabilities = {
+							com.apple.GameCenter = {
+								enabled = 1;
+							};
+						};
+					};
+				};
 			};
 			buildConfigurationList = D7E6CDB33A4A483A8AA91DE2 /* Build configuration list for PBXProject "Lumyra" */;
 			compatibilityVersion = "Xcode 14.0";
