@@ -4,5 +4,9 @@
 <dict>
 	<key>com.apple.developer.game-center</key>
 	<true/>
+	<key>com.apple.developer.networking.slicing.appcategory</key>
+	<array/>
+	<key>com.apple.developer.networking.slicing.trafficcategory</key>
+	<array/>
 </dict>
 </plist>
