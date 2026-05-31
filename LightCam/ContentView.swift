@@ -43,27 +43,6 @@ struct ContentView: View {
                     .allowsHitTesting(false)
                     .animation(.easeInOut(duration: 0.35), value: presetManager.currentPresetId)
 
-                // Language button
-                VStack {
-                    HStack {
-                        Spacer()
-                        Button {
-                            withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
-                                showingLanguagePicker = true
-                            }
-                        } label: {
-                            Image(systemName: "globe")
-                                .font(.system(size: 13, weight: .medium))
-                                .foregroundColor(.white.opacity(0.45))
-                                .frame(width: 32, height: 32)
-                                .background(.white.opacity(0.06))
-                                .clipShape(Circle())
-                        }
-                        .padding(.trailing, 20)
-                        .padding(.top, geometry.safeAreaInsets.top + 8)
-                    }
-                    Spacer()
-                }
 
                 VStack(spacing: 0) {
                     Spacer()
@@ -249,35 +228,56 @@ struct ContentView: View {
 
     private var brightnessSlider: some View {
         let p = preset
-        return HStack(spacing: 12) {
-            ZStack {
-                Circle()
-                    .fill(p.color.opacity(0.15))
-                    .frame(width: 34, height: 34)
-                Image(systemName: "sparkle")
-                    .font(.system(size: 15, weight: .bold))
-                    .foregroundColor(p.color)
+        return VStack(spacing: 0) {
+            // Language button — top-right of brightness bar
+            HStack {
+                Spacer()
+                Button {
+                    withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+                        showingLanguagePicker = true
+                    }
+                } label: {
+                    Image(systemName: "globe")
+                        .font(.system(size: 11, weight: .medium))
+                        .foregroundColor(.white.opacity(0.40))
+                        .frame(width: 26, height: 26)
+                        .background(.white.opacity(0.06))
+                        .clipShape(Circle())
+                }
+                .padding(.trailing, 2)
+                .padding(.bottom, 2)
             }
-            .shadow(color: p.color.opacity(0.3), radius: 6, x: 0, y: 2)
 
-            Slider(value: Binding(
-                get: { presetManager.screenBrightness },
-                set: { presetManager.setBrightness($0) }
-            ), in: 0.0...1.0)
-            .tint(
-                LinearGradient(
-                    colors: [p.color.opacity(0.5), p.color],
-                    startPoint: .leading,
-                    endPoint: .trailing
+            HStack(spacing: 12) {
+                ZStack {
+                    Circle()
+                        .fill(p.color.opacity(0.15))
+                        .frame(width: 34, height: 34)
+                    Image(systemName: "sparkle")
+                        .font(.system(size: 15, weight: .bold))
+                        .foregroundColor(p.color)
+                }
+                .shadow(color: p.color.opacity(0.3), radius: 6, x: 0, y: 2)
+
+                Slider(value: Binding(
+                    get: { presetManager.screenBrightness },
+                    set: { presetManager.setBrightness($0) }
+                ), in: 0.0...1.0)
+                .tint(
+                    LinearGradient(
+                        colors: [p.color.opacity(0.5), p.color],
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
                 )
-            )
 
-            Text("\(Int(presetManager.screenBrightness * 100))%")
-                .font(.system(size: 12, weight: .semibold, design: .rounded))
-                .foregroundColor(contrastColor)
-                .frame(width: 38, alignment: .trailing)
+                Text("\(Int(presetManager.screenBrightness * 100))%")
+                    .font(.system(size: 12, weight: .semibold, design: .rounded))
+                    .foregroundColor(contrastColor)
+                    .frame(width: 38, alignment: .trailing)
+            }
+            .padding(.horizontal, 4)
         }
-        .padding(.horizontal, 4)
     }
 
     // MARK: - Preset Button
