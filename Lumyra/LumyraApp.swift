@@ -220,7 +220,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 }
 
 @main
-struct LightCamApp: App {
+struct LumyraApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @StateObject private var loc = LocalizationManager()
     @StateObject private var presetManager = PresetManager()

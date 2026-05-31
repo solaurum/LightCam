@@ -18,11 +18,11 @@
 		A50000000000000000000005 /* ColorPresetEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B50000000000000000000005 /* ColorPresetEditor.swift */; };
 		A60000000000000000000006 /* LocalizationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B60000000000000000000006 /* LocalizationManager.swift */; };
 		A7CFBE2A6EAE45889B5F41B5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F26391DDB3444A0388A749D8 /* Assets.xcassets */; };
-		E36C0D359DE948BC8AD857E8 /* LightCamApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95CD8E2BDF284E97AD8DF0BD /* LightCamApp.swift */; };
+		E36C0D359DE948BC8AD857E8 /* LumyraApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95CD8E2BDF284E97AD8DF0BD /* LumyraApp.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		95CD8E2BDF284E97AD8DF0BD /* LightCamApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightCamApp.swift; sourceTree = "<group>"; };
+		95CD8E2BDF284E97AD8DF0BD /* LumyraApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LumyraApp.swift; sourceTree = "<group>"; };
 		B10000000000000000000001 /* CameraManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraManager.swift; sourceTree = "<group>"; };
 		B20000000000000000000002 /* LightPreset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightPreset.swift; sourceTree = "<group>"; };
 		B30000000000000000000003 /* CameraPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraPreview.swift; sourceTree = "<group>"; };
@@ -31,7 +31,7 @@
 		B70000000000000000000012 /* PresetPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresetPickerView.swift; sourceTree = "<group>"; };
 		B50000000000000000000005 /* ColorPresetEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorPresetEditor.swift; sourceTree = "<group>"; };
 		B60000000000000000000006 /* LocalizationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalizationManager.swift; sourceTree = "<group>"; };
-		B826C4FDDF9D4161BAA957C3 /* LightCam.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LightCam.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B826C4FDDF9D4161BAA957C3 /* Lumyra.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Lumyra.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D494C275E2994F22A899CF8A /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		EF98BDC838D942DFA16DCCE1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F26391DDB3444A0388A749D8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -52,15 +52,15 @@
 		3017900FE3644C03B9135E1B = {
 			isa = PBXGroup;
 			children = (
-				A70C19AA35474AED8778A640 /* LightCam */,
+				A70C19AA35474AED8778A640 /* Lumyra */,
 				EBD7ED059C824D00A11F2E6B /* Products */,
 			);
 			sourceTree = "<group>";
 		};
-		A70C19AA35474AED8778A640 /* LightCam */ = {
+		A70C19AA35474AED8778A640 /* Lumyra */ = {
 			isa = PBXGroup;
 			children = (
-				95CD8E2BDF284E97AD8DF0BD /* LightCamApp.swift */,
+				95CD8E2BDF284E97AD8DF0BD /* LumyraApp.swift */,
 				D494C275E2994F22A899CF8A /* ContentView.swift */,
 				B10000000000000000000001 /* CameraManager.swift */,
 				B20000000000000000000002 /* LightPreset.swift */,
@@ -73,13 +73,13 @@
 				EF98BDC838D942DFA16DCCE1 /* Info.plist */,
 				F26391DDB3444A0388A749D8 /* Assets.xcassets */,
 			);
-			path = LightCam;
+			path = Lumyra;
 			sourceTree = "<group>";
 		};
 		EBD7ED059C824D00A11F2E6B /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				B826C4FDDF9D4161BAA957C3 /* LightCam.app */,
+				B826C4FDDF9D4161BAA957C3 /* Lumyra.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -87,9 +87,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		26CF2FD3B10D473DA735E291 /* LightCam */ = {
+		26CF2FD3B10D473DA735E291 /* Lumyra */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 8BCD84B6DF564E8CAE4A1615 /* Build configuration list for PBXNativeTarget "LightCam" */;
+			buildConfigurationList = 8BCD84B6DF564E8CAE4A1615 /* Build configuration list for PBXNativeTarget "Lumyra" */;
 			buildPhases = (
 				0788FF65809F441499E52FE1 /* Sources */,
 				84ADFCBFF86D4438B4B08C62 /* Frameworks */,
@@ -99,12 +99,12 @@
 			);
 			dependencies = (
 			);
-			name = LightCam;
+			name = Lumyra;
 			packageProductDependencies = (
 				E50000000000000000000002 /* SimulatorCameraClient */,
 			);
-			productName = LightCam;
-			productReference = B826C4FDDF9D4161BAA957C3 /* LightCam.app */;
+			productName = Lumyra;
+			productReference = B826C4FDDF9D4161BAA957C3 /* Lumyra.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -117,7 +117,7 @@
 				LastSwiftUpdateCheck = 2650;
 				LastUpgradeCheck = 2650;
 			};
-			buildConfigurationList = D7E6CDB33A4A483A8AA91DE2 /* Build configuration list for PBXProject "LightCam" */;
+			buildConfigurationList = D7E6CDB33A4A483A8AA91DE2 /* Build configuration list for PBXProject "Lumyra" */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -133,7 +133,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				26CF2FD3B10D473DA735E291 /* LightCam */,
+				26CF2FD3B10D473DA735E291 /* Lumyra */,
 			);
 		};
 /* End PBXProject section */
@@ -154,7 +154,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E36C0D359DE948BC8AD857E8 /* LightCamApp.swift in Sources */,
+				E36C0D359DE948BC8AD857E8 /* LumyraApp.swift in Sources */,
 				5FFD9A7BB7E1488983B368B3 /* ContentView.swift in Sources */,
 				A10000000000000000000001 /* CameraManager.swift in Sources */,
 				A20000000000000000000002 /* LightPreset.swift in Sources */,
@@ -178,7 +178,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = JP628F7U55;
 				ENABLE_PREVIEWS = NO;
-				INFOPLIST_FILE = LightCam/Info.plist;
+				INFOPLIST_FILE = Lumyra/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "自拍补光相机";
 				INFOPLIST_KEY_NSCameraUsageDescription = "This app needs camera access to capture photos";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Photos are saved to your photo library";
@@ -192,8 +192,8 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.jinyanghu.LightCam;
-				PRODUCT_NAME = LightCam;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jinyanghu.Lumyra;
+				PRODUCT_NAME = Lumyra;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -232,7 +232,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = JP628F7U55;
 				ENABLE_PREVIEWS = NO;
-				INFOPLIST_FILE = LightCam/Info.plist;
+				INFOPLIST_FILE = Lumyra/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "自拍补光相机";
 				INFOPLIST_KEY_NSCameraUsageDescription = "This app needs camera access to capture photos";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Photos are saved to your photo library";
@@ -246,8 +246,8 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.jinyanghu.LightCam;
-				PRODUCT_NAME = LightCam;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jinyanghu.Lumyra;
+				PRODUCT_NAME = Lumyra;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -280,7 +280,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		8BCD84B6DF564E8CAE4A1615 /* Build configuration list for PBXNativeTarget "LightCam" */ = {
+		8BCD84B6DF564E8CAE4A1615 /* Build configuration list for PBXNativeTarget "Lumyra" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				2470EB82FAE942DA8252EE3E /* Debug */,
@@ -289,7 +289,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		D7E6CDB33A4A483A8AA91DE2 /* Build configuration list for PBXProject "LightCam" */ = {
+		D7E6CDB33A4A483A8AA91DE2 /* Build configuration list for PBXProject "Lumyra" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				28CAEAFBA1334F8DB5392A5A /* Debug */,

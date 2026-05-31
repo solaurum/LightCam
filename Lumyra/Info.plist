@@ -5,15 +5,15 @@
     <key>CFBundleDevelopmentRegion</key>
     <string>en_US</string>
     <key>CFBundleDisplayName</key>
-    <string>LightCam 补光相机</string>
+    <string>Lumyra</string>
     <key>CFBundleExecutable</key>
-    <string>LightCam</string>
+    <string>Lumyra</string>
     <key>CFBundleIdentifier</key>
-    <string>com.jinyanghu.LightCam</string>
+    <string>com.jinyanghu.Lumyra</string>
     <key>CFBundleInfoDictionaryVersion</key>
     <string>6.0</string>
     <key>CFBundleName</key>
-    <string>LightCam</string>
+    <string>Lumyra</string>
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleShortVersionString</key>

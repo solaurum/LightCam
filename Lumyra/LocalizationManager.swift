@@ -89,10 +89,10 @@ class LocalizationManager: ObservableObject {
         "open_settings": [.english: "Open Settings", .chinese: "打开设置", .korean: "설정 열기", .japanese: "設定を開く"],
         "cancel": [.english: "Cancel", .chinese: "取消", .korean: "취소", .japanese: "キャンセル"],
         "camera_permission_message": [
-            .english: "Please allow camera access in System Settings to use LightCam",
+            .english: "Please allow camera access in System Settings to use Lumyra",
             .chinese: "请在系统设置中允许补光相机访问摄像头",
-            .korean: "시스템 설정에서 LightCam의 카메라 접근을 허용해주세요",
-            .japanese: "システム設定でLightCamのカメラアクセスを許可してください"
+            .korean: "시스템 설정에서 Lumyra의 카메라 접근을 허용해주세요",
+            .japanese: "システム設定でLumyraのカメラアクセスを許可してください"
         ],
 
         // Camera loading
